@@ -1,6 +1,7 @@
 class: center, middle
 
-# Title
+# Reactive Programming with Bacon.js and RxJS
+
 
 ---
 
@@ -12,10 +13,64 @@ class: center, middle
 
 ---
 
-# Introduction
+# What is Reactive Programming?
 
-* Bullet 1
-* Bullet 2
+- Wikipedia : "An asynchronous programming paradigm concerned with data streams and the propagation of change"
+
+- A different way of thinking about asynchronous data, e.g.:
+    - Mouse clicks
+    - Field updates
+    - Server-side data
+    - Timer 'ticks'
+    - Other page events 
+
+- Designed to be an easier, clearer and more expressive way of handling complex interactions between events
+
+- Central abstraction is a 'stream of events'
+
+- Streams can be operated on 'as a whole', rather than individual events, e.g.:
+    - merging two streams
+    - filtering events out of a stream
+    - accruing state (e.g. counters)
+
+- Things can 'subscribe' to streams to be notified and take action
+    - Separates event flow and side effects
+
+- Can think of this in terms of dependent things _reacting_ to changes in their dependencies:
+    - Rather than the data sources _pushing_ data into their dependents
+
+---
+
+# The Original Reactive System
+
+- The spreadsheet
+
+- Cells declare their dependencies on other cells and react to changes automatically
+
+
+---
+
+# History
+
+- Much early work done by Erik Meijer whilst at MSFT
+
+- 2012 ACM Paper - 'Your Mouse is a Database'
+
+- 2009 - Reactive Extensions for .NET released
+    - Subsequently extended to other languages
+
+
+---
+
+# What We'll Look at Today
+
+- bacon.js
+    - Simpler
+
+- RxJS
+    - Implementation of Reactive Extensions for JavaScript
+
+- Discussion of basic features and comparison between the frameworks
 
 ---
 
