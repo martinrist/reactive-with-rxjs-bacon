@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 1 - Mouse Clicks (Bacon.js)</title>
+    <script src="bacon-0.7.91.js"></script>
+</head>
+<body></body>
+
+<script>
+    const clickToCoords =
+        e => "(" + e.clientX + ", " + e.clientY + ")";
+
+    // Create a Bacon EventStream
+    const eventStream = Bacon.fromEvent(document, "click");
+
+    // Convert clicks to coordinates
+    const coordStream = eventStream.map(clickToCoords);
+
+    // Subscribe to the EventStream
+    coordStream.log();
+</script>
+
+</html>

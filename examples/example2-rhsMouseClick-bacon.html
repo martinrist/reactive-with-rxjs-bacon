@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 2 - RHS Mouse Clicks (Bacon.js)</title>
+    <script src="bacon-0.7.91.js"></script>
+</head>
+<body></body>
+
+<script>
+    // Create a Bacon EventStream
+    const eventStream = Bacon.fromEvent(document, "click");
+
+    // Filter to create a new stream with only the 'right-hand' clicks
+    const rhsEventStream = eventStream.filter(
+        e => e.clientX > window.innerWidth / 2);
+
+    // Subscribe to the EventStream
+    rhsEventStream.log();
+</script>
+
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 5 - First Five Mouse Clicks (Bacon.js)</title>
+    <script src="bacon-0.7.91.js"></script>
+</head>
+<body></body>
+
+<script>
+    const eventStream = Bacon.fromEvent(document, "click");
+    eventStream.take(5).log();
+</script>
+
+</html>

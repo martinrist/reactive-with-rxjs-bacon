@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 5 - First Five Mouse Clicks (Traditional)</title>
+</head>
+<body></body>
+
+<script>
+    let clicks = 0;
+    document.addEventListener("click", function registerClicks(e) {
+        if (clicks < 5) {
+            console.log(e);
+            clicks += 1;
+        } else {
+            document.removeEventListener("click", registerClicks);
+        }
+    });
+</script>
+
+</html>
