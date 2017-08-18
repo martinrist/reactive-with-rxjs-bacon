@@ -28,11 +28,12 @@ class: center, middle
 
 - Another approach to avoiding 'callback hell'
 
-- The central abstraction is a 'stream of events':
+- The central abstraction is the 'observable':
+    - Represents a stream of events that can be observed and reacted to
     - Events can be of different types and have different sources
     - Reactive Programming abstracts across these different sources so they can be handled in the same way
 
-- Streams can be operated on 'as a whole', rather than individual events, e.g.:
+- Observables can be operated on 'as a whole', rather than individual events, e.g.:
     - merging two streams
     - filtering events out of a stream
     - accruing state (e.g. counters)
@@ -89,7 +90,7 @@ class: center, middle
     document.addEventListener("click", console.log);
 ```
 
-- With Bacon (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>):
+- With Bacon (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>) we use a `EventStream`:
 ```javascript
     // Create a Bacon EventStream
     const eventStream = Bacon.fromEvent(document, "click");
@@ -174,7 +175,7 @@ class: center, middle
 
 ---
 
-# Filtering and Mapping
+# Combining Filtering and Mapping
 
 - Only show the RHS clicks _and_ show them as coordinates.
 
@@ -248,9 +249,37 @@ class: center, middle
 
 - Sound familiar?
 
-- This is often why this stuff is referred to as 'Functional Reactive Programming` (FRP)...
+- This is often why this stuff is referred to as 'Functional Reactive Programming' (FRP)
 
 - ... although that's technically different, and *definitely* a story for another time
+
+- So, we've seen examples of `filter` and `map`, but what about `reduce`?
+
+---
+
+# Bacon Properties
+
+- Earlier, we saw examples of bacon.js's `EventStream` - a type of observable
+
+- The other flavour of observable in bacon.js is the `Property`:
+    - Basically, an `EventStream` with the concept of 'current value'
+
+- Let's say we want to adapt the earlier examples to _count_ the number of clicks as well
+    - Still have the `EventStream` for the clicks
+    - But we also want a 'click count' `Property`, whose value increments on each click
+
+- We can do this using `scan`, Bacon's version of `reduce`:
+```javascript
+    const clickStream = Bacon.fromEvent(document, "click");
+    const clickCount = clickStream.scan(0, (acc, e) => acc + 1);
+
+    clickStream.log();
+    clickCount.log();
+```
+
+- Notice how we are subscribing independently to the two observables
+
+- Also notice that there's no state being maintained in our code
 
 ---
 
@@ -260,54 +289,263 @@ class: center, middle
 
 - What sort of things can you create an EventStream from?
 
-- `range`, `interval`,
+- Simple cases:
+
+```javascript
+    // ... from an array
+    const arrayStream = Bacon.fromArray([1, 2, 3, 4, 5]);
+
+    // ... an empty event at fixed intervals (i.e. a timer tick)
+    const intervalStream = Bacon.interval(1000)
+
+    // ... sequential values with intervals
+    const sequentialStream = Bacon.sequentially(1000, ['a', 'b', 'c', 'd', 'e']);
+```
+
+- Also integration with other JS event-related abstractions
+
+```javascript
+    // ... from DOM Events (JQuery)
+    const clickEventStream = $('#buttonId').asEventStream('click');
+
+    // ... from DOM Events (without JQuery)
+    const clickEventStream = Bacon.fromEvent(button, 'click');
+
+    // ... from a Node.js EventEmitter
+    const file = fs.createReadStream(filePath);
+    const fileStream = Bacon.fromEvent(file, 'data');
+    ```
+
+    // ... from Promises (e.g. from JQuery AJAX)...
+    const agentPromise = $.ajax({ url: "http://httpbin.org/user-agent" });
+    const promiseStream = Bacon.fromPromise(agentPromise);
+
+    // ... or in NodeJS, using axios
+    const responsePromise = axios.get("http://httpbin.org/headers");
+    const responseStream = Bacon.fromPromise(responsePromise)
+        .map(r => r.data);
+```
+
+- It's also possible to create an `EventStream` from an arbitrary source, using the `Bacon.fromBinder` function
+
+- RxJS has some more, e.g.:
+    - `interval` - emits an incrementing integer
+    - Better 'no-op' cases for testing - e.g. `never`
+    - `from` is more flexible and can create Observables from lots of things
+        - as opposed to Bacon's specific `fromXXX` methods
+        - e.g. [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
+
 
 ---
 
-# More complex operators
+# Over to RxJS
 
-- `flatMap` for an Ajax request
+- RxJS is the JavaScript implementation of [Reactive Extensions](http://reactivex.io)
 
-- See https://rxviz.com/
+- In contract to bacon.js (a specific implementation), Reactive Extensions is an API
 
-# RxJS / Bacon - Comparison Points
+- Multiple implementations exist:
+    - Rx.NET (which is where it came from)
+    - RxJava
+    - RxJS
+    - RxScala
+    - RxClojure
+    - RxSwift
+    - ... [and others](http://reactivex.io/languages.html)
 
-* Multi-langauge bindings (Rx) vs single-language (Bacon)
---
+- We're just going to look at RxJS here
 
-* Hot vs Cold Observables (RxJS only)
---
+- Modular distribution (unlike bacon.js)
+    - `rx.all.js` for the whole lot
+    - ... all the way down to `rx.lite.js` for a lightweight version
+    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators
 
-* EventStream vs Property (Bacon only)
---
-
-* Performance tradeoffs (Bacon slower for glitch-free performance)
---
-
-* Glitch-free / atomic updates (Bacon properties)
---
-
-* Lazy evaluation (Bacon)
---
-
-* Error handling - Errors terminate stream (RxJS) vs multiple errors (Bacon)
---
-
-* Packaging - different subsets / cut-down versions (RxJS)
---
-
-* Testing using Schedulers (RxJS) - can you do similar with Bacon?
+- RxJS also has other modules that add further bindings:
+    - [RxJS-DOM](https://github.com/Reactive-Extensions/RxJS-DOM) - DOM Bindings, JSONP, WebSockets, WebWorkers
+    - [rx.angular.js](https://github.com/Reactive-Extensions/rx.angular.js)
 
 ---
 
-# Other Discussion Points
+# Terminology Changes
 
-* Why they're not officially *F*RP (continuous time)
-* Bacon's origin from RxJS (originally not open source)
-* Bacon - CoffeeScript?
+- Everything is an `Observable`
+    - No distinction between `EventStream` and `Property`
+    - This is one of the main differences between bacon.js and RxJS
+
+- Bacon.js uses the term 'subscriber' to refer to the object listening to incoming data
+    - RxJS uses `Observer`
+
+- A lot of the core APIs are similar - e.g. `map`, `filter`, `scan`, with some minor differences:
+
+- Here's the 'log and count mouse clicks on the right' example in RxJS:
+
+```javascript
+    const rhsCoordStream =
+           Rx.Observable.fromEvent(document, "click")
+               .filter(e => e.clientX > window.innerWidth / 2)
+               .map(clickToCoords);
+
+    // `scan` takes the initial value as the second arg
+    const rhsCountStream = rhsCoordStream.scan(((total, e) => total + 1), 0);
+
+    // RxJS has no `log` function, so we have to `subscribe`
+    rhsCoordStream.subscribe(console.log);
+    rhsCountStream.subscribe(console.log);
+```
 
 ---
 
+# Visualising Observables
+
+- 'Marble Diagrams' are often used to visualise Observables and operators
+
+![Marble Diagram](images/marbleDiagram.png)
+
+- Lots of examples at [RxJS Marbles](http://rxmarbles.com):
+
+---
+
+# Hot vs Cold Observables
+
+- In bacon.js, an observable only emits a value when a subscriber subscribes to it:
+```javascript
+    const stream = Bacon.interval(1000);
+    console.log("Stream created");
+    setTimeout(() => stream.log(), 5000);
+
+    > Stream created
+    ... 5 seconds later ...
+    > {}
+    > {}
+    > {}
+```
+
+- Also, all subscribers to the same observable always get the same event:
+```javascript
+    // A clunkier version of Rx.Observable.interval(1000)
+    const stream = Bacon.repeat(i => Bacon.later(1000, i));
+    console.log("Stream created");
+    stream.onValue(e => console.log("Subscriber 1: " + e));
+
+    setTimeout(() =>
+        stream.onValue(e => console.log("Subscriber 2: " + e))
+        , 5000);
+
+    > Stream created
+    > Subscriber 1: 0
+    > Subscriber 1: 1
+    > Subscriber 1: 2
+    > Subscriber 1: 3
+    > Subscriber 1: 4
+    > Subscriber 2: 4
+    > Subscriber 1: 5
+    > Subscriber 2: 5
+    > Subscriber 1: 6
+    > Subscriber 2: 6
+    ...
+```
+
+- In RxJS it's a bit more complicated:
+```javascript
+    const stream = Rx.Observable.interval(1000);
+    console.log("Stream created");
+    stream.subscribe(e => console.log("Subscriber 1: " + e));
+
+    setTimeout(() =>
+        stream.subscribe(e => console.log("Subscriber 2: " + e))
+        , 5000);
+
+    > Stream created
+    > Subscriber 1: 0
+    > Subscriber 1: 1
+    > Subscriber 1: 2
+    > Subscriber 1: 3
+    > Subscriber 1: 4
+    > Subscriber 2: 0
+    > Subscriber 1: 5
+    > Subscriber 2: 1
+    > Subscriber 1: 6
+    > Subscriber 2: 2
+```
+
+- `Rx.Observable.interval` is what's called a _cold observable_ in RxJS:
+    - Emits values only when Observers subscribe to it (like bacon.js)
+    - Every new subscriber receives events from the start (*not* like bacon.js)
+
+- In contrast, a _hot observable_:
+    - May start emitting values before it has any observers
+    - Observers joining later may observe values midway through the observable
+    - All Observers to the same Hot Observable receive exactly the same value
+    - Just like traditional JavaScript events
+
+- It's possible to convert a _cold observable_ to a _hot observable_
+
+- This is another one of the key differences between bacon.js and RxJS:
+    - Means RxJS is more flexible / powerful
+    - But we need to be careful to avoid unexpected behaviour
+    - Need to pay attention to what kind of Observable we're using
+
+- Can cause duplicate network requests:
+    - We want to make a call every 5 seconds (`Rx.Observable.interval(5000)`)
+    - We get an Observable of the response
+    - We have multiple subscribers to the response
+    - TODO: Simple example
+
+---
+
+# Glitches
+
+- Example of tens / units in Bacon
+    - Atomic updates
+
+- RxJS
+    - Can get intermediate results
+
+- The price is performance
+    - See https://github.com/baconjs/bacon.js/wiki/FAQ#isnt-it-slow-how-is-the-performance
+    - Add RxJS link to performance comparison
+
+---
+
+# Error Handling
+
+* In RxJS:
+    - Errors terminate stream
+
+- In bacon.js:
+    - the Error event does not terminate a stream.
+    - So, a stream may contain multiple errors.
+    - To me, this makes more sense than always terminating the stream on error;
+    - this way the application developer has more direct control over error handling.
+    - You can always use `stream.endOnError()` to get a stream that ends on error!
+
+---
+
+# AutoComplete with RxJS
+
+- Pull stuff together, using
+    - Debounce
+    - JSON / Ajax
+    - DOM updates
+
+- Based on https://github.com/Reactive-Extensions/RxJS/tree/master/examples/autocomplete
+
+---
+
+# Interop with ES6 Generators
+
+- Interop with Generators and Promises
+    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators
+    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#promises
+    - In particular `toPromise`
+
+---
+
+# Misc TODOs
+- Browser support?
+
+---
+l
 # Links
 
 * [Why Bacon?](https://github.com/baconjs/bacon.js#why-bacon)

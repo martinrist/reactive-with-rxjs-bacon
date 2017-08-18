@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 7 - Right-hand Mouse Clicks and Counts (Bacon.js)</title>
+    <script src="bacon-0.7.91.js"></script>
+</head>
+<body></body>
+
+<script>
+    const clickToCoords =
+        e => "(" + e.clientX + ", " + e.clientY + ")";
+
+    const rhsCoordStream =
+        Bacon.fromEvent(document, "click")
+            .filter(e => e.clientX > window.innerWidth / 2)
+            .map(clickToCoords);
+
+    const rhsCountStream = rhsCoordStream.scan(0, (acc, e) => acc + 1);
+
+    rhsCoordStream.log();
+    rhsCountStream.log();
+
+</script>
+
+</html>

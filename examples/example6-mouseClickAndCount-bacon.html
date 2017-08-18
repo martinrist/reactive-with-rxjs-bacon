@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 6 - Mouse Clicks and Counts (Bacon.js)</title>
+    <script src="bacon-0.7.91.js"></script>
+</head>
+<body></body>
+
+<script>
+    const clickStream = Bacon.fromEvent(document, "click");
+    const clickCount = clickStream.scan(0, (acc, e) => acc + 1);
+
+    clickStream.log();
+    clickCount.log();
+</script>
+
+</html>
