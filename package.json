@@ -10,6 +10,7 @@
   "dependencies": {
     "baconjs": "latest",
     "axios" : "latest",
-    "rx" : "latest"
+    "rx" : "latest",
+    "rx-http-request": "latest"
   }
 }
