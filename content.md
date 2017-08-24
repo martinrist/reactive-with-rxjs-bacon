@@ -507,6 +507,12 @@ class: center, middle
 
 ---
 
+# Schedulers & Testing (RxJS only)
+
+- TODO: From Chapter 5 of 'Reactive Programming with RxJS'
+
+---
+
 # Backpressure
 
 - TODO: [Write up chapter](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/d9651fd2-fff2-4dee-82de-6bf1eddff71b.xhtml)
@@ -530,9 +536,10 @@ class: center, middle
 
 # Error Handling
 
+- TODO: Complete section from [book](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/dcd88f19-083b-4279-88cd-1a678dc61487.xhtml)
+
 * In RxJS:
     - `.subscribe(onNextHandler, errorHandler, completionHandler)`
-
     - Errors terminate stream
 
 - In bacon.js:
@@ -551,6 +558,8 @@ class: center, middle
     - JSON / Ajax
     - DOM updates
 
+- TODO: Complete example
+
 - Based on https://github.com/Reactive-Extensions/RxJS/tree/master/examples/autocomplete
 
 ---
@@ -564,8 +573,20 @@ class: center, middle
 
 ---
 
-# Misc TODOs
-- Browser support?
+# Comparison Table
+
+- TODO: Add comparison table, with attributes like:
+    - Multi-language
+    - Modularity
+    - Hot observables
+    - Cold observables
+    - Properties
+    - Glitch-free performance
+    - Error terminates Observable
+    - Performance
+    - Generator support?
+    - Angular (+ other framework) bindings?
+    - Scheduler options (no for Bacon because it's just JS)
 
 ---
 
