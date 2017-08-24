@@ -328,12 +328,13 @@ class: center, middle
 
 - It's also possible to create an `EventStream` from an arbitrary source, using the `Bacon.fromBinder` function
 
-- RxJS has some more, e.g.:
+- RxJS has all of these, and more, e.g.:
     - `interval` - emits an incrementing integer
-    - Better 'no-op' cases for testing - e.g. `never`
-    - `from` is more flexible and can create Observables from lots of things
+    - Better 'no-op' cases for testing and composition - e.g. `never`
+    - `from` is more flexible and can create Observables from a more general iterable:
         - as opposed to Bacon's specific `fromXXX` methods
-        - e.g. [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
+        - e.g. ES6 Set and Map objects
+        - Or [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
 
 
 ---
@@ -375,7 +376,7 @@ class: center, middle
 - Bacon.js uses the term 'subscriber' to refer to the object listening to incoming data
     - RxJS uses `Observer`
 
-- A lot of the core APIs are similar - e.g. `map`, `filter`, `scan`, with some minor differences:
+- A lot of the core APIs are similar - e.g. `map`, `filter`, `scan`, with some minor differences (e.g. argument order)
 
 - Here's the 'log and count mouse clicks on the right' example in RxJS:
 
@@ -481,7 +482,8 @@ class: center, middle
 - It's possible to convert a _cold observable_ to a _hot observable_
 
 - This is another one of the key differences between bacon.js and RxJS:
-    - Means RxJS is more flexible / powerful
+    - bacon.js has no _cold observables_, so EventStreams and Properties are consistent among subscribers
+    - RxJS has more options, therefore more flexible
     - But we need to be careful to avoid unexpected behaviour
     - Need to pay attention to what kind of Observable we're using
 
@@ -490,6 +492,25 @@ class: center, middle
     - We get an Observable of the response
     - We have multiple subscribers to the response
     - TODO: Simple example
+
+---
+
+# Subjects (RxJS only)
+
+- TODO: TBC
+
+---
+
+# Disposables (RxJS only)
+
+- TODO: TBC
+
+---
+
+# Backpressure
+
+- TODO: [Write up chapter](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/d9651fd2-fff2-4dee-82de-6bf1eddff71b.xhtml)
+
 
 ---
 
@@ -510,6 +531,8 @@ class: center, middle
 # Error Handling
 
 * In RxJS:
+    - `.subscribe(onNextHandler, errorHandler, completionHandler)`
+
     - Errors terminate stream
 
 - In bacon.js:
@@ -545,7 +568,7 @@ class: center, middle
 - Browser support?
 
 ---
-l
+
 # Links
 
 * [Why Bacon?](https://github.com/baconjs/bacon.js#why-bacon)
