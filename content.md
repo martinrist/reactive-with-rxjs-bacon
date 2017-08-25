@@ -501,12 +501,6 @@ class: center, middle
 
 ---
 
-# Disposables (RxJS only)
-
-- TODO: TBC
-
----
-
 # Schedulers & Testing (RxJS only)
 
 - TODO: From Chapter 5 of 'Reactive Programming with RxJS'
@@ -561,15 +555,6 @@ class: center, middle
 - TODO: Complete example
 
 - Based on https://github.com/Reactive-Extensions/RxJS/tree/master/examples/autocomplete
-
----
-
-# Interop with ES6 Generators
-
-- Interop with Generators and Promises
-    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators
-    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#promises
-    - In particular `toPromise`
 
 ---
 
