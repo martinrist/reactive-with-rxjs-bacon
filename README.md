@@ -9,7 +9,5 @@ To launch the presentation:
 # TODO Items
 
 - Add section on composing multiple streams.
-- Extract into separate top-level Git repo.
-- Add ESLint configuration.
 - Restructure examples to remove numbering.
 - Work out easiest way to run Node.js examples.
