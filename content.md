@@ -497,7 +497,151 @@ class: center, middle
 
 # Subjects (RxJS only)
 
-- TODO: TBC
+- So far, we've talked about Observers and Observables in RxJS
+
+- RxJS also has a `Subject`, which can act as both an `Observer` and `Observable`:
+    - Can subscribe to an `Observable` (i.e. act as an `Observer`)
+    - Can produce values and have its own subscribers (i.e. act an `Observable`)
+    - Acts like a 'bridge' or 'proxy' between a data source and subscribers
+
+```javascript
+    const source = Rx.Observable.interval(1000);
+    const subject = new Rx.Subject();
+    source.subscribe(subject);
+    subject.subscribe(console.log);
+
+    > 0
+    > 1
+    > 2
+    > 3
+    > 4
+    ...
+```
+
+- By introducing the proxy, we can add more complex behaviour with multiple subscribers.
+
+- Recall what happens with two subscribers to `source`:
+
+```javascript
+    const source = Rx.Observable.interval(1000);
+    source.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        source.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 3000);
+
+    > Subscriber 1: 0
+    > Subscriber 1: 1
+    > Subscriber 1: 2
+    > Subscriber 2: 0
+    > Subscriber 1: 3
+    > Subscriber 2: 1
+    > Subscriber 1: 4
+    > Subscriber 2: 2
+    > Subscriber 1: 5
+```
+
+- This is because `interval` is a _cold obsverable_, so it restarts for each subscriber.
+
+- If we introduce a basic `Subject`, it turns `interval` into a _hot observable_:
+
+```javascript
+    const source = Rx.Observable.interval(1000);
+    const subject = new Rx.Subject();
+    source.subscribe(subject);
+
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 3000);
+
+    > Subscriber 1: 0
+    > Subscriber 1: 1
+    > Subscriber 1: 2
+    > Subscriber 2: 2
+    > Subscriber 1: 3
+    > Subscriber 2: 3
+    > Subscriber 1: 4
+    > Subscriber 2: 4
+    ...
+```
+
+- `AsyncSubject` emits the last value of a sequence when it terminates:
+    - It then caches the value forever
+    - Subsequent subscribers receive the value immediately
+    - Useful for async network requests that we want to cache
+
+![Marble Diagram - AsyncSubject](images/asyncSubjectMarbleDiagram.png)
+
+```javascript
+    // Emits "red", "green", "blue" at 1s intervals
+    const source = Rx.Observable.from(["red", "green", "blue"])
+        .zip(Rx.Observable.interval(1000), (c, i) => c);
+    const subject = new Rx.AsyncSubject();
+    source.subscribe(subject);
+
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 5000);
+
+    > ... at T+3, first subscriber emits last value
+    > Subscriber 1: blue
+    > ... at T+5, second subscriber gets last value
+    Subscriber 2: blue
+```
+
+- Next up `BehaviorSubject`:
+    - When `Observer` subscribes, receives the last emitted value
+    - Then receives all subsequent values emitted
+    - Requires an initial value in the constructor
+
+![Marble Diagram - BehaviorSubject](images/behaviorSubjectMarbleDiagram.png)
+
+```javascript
+    const subject = new Rx.BehaviorSubject("purple");
+    source.subscribe(subject);
+
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 2500);
+
+    > ... initial value
+    > Subscriber 1: purple
+    > Subscriber 1: red
+    > Subscriber 1: green
+    > ... at T+2.5s, subscriber 2 joins the party
+    > Subscriber 2: green
+    > Subscriber 1: blue
+    > Subscriber 2: blue
+```
+
+- Finally, `ReplaySubject`:
+     - When `Observer` subscribes, receives all values emitted so far
+     - Then receives all subsequent values emitted
+     - Can customise with count- or time-based windows
+
+![Marble Diagram - ReplaySubject](images/replaySubjectMarbleDiagram.png)
+
+```javascript
+    const subject = new Rx.ReplaySubject();
+    source.subscribe(subject);
+
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 2500);
+
+    > Subscriber 1: red
+    > Subscriber 1: green
+    > ... when subscriber 2 joins, it immediately gets 'red' and 'green'
+    > Subscriber 2: red
+    > Subscriber 2: green
+    > Subscriber 1: blue
+    > Subscriber 2: blue
+```
+
+- So, in summary, we have many more options about how we can customise Observable behaviours.
 
 ---
 
