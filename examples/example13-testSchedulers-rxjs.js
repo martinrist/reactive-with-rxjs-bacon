@@ -2,26 +2,18 @@
 
 const Rx = require("rx");
 
-const onNext = Rx.ReactiveTest.onNext;
+const scheduler = new Rx.TestScheduler();
+const testObject = Rx.Observable.interval(1000, scheduler);
 
-testrunner.test("Test value order",
-    assert => {
-        const scheduler = new Rx.TestScheduler();
-        const subject = scheduler.createColdObservable(
-            onNext(100, "first"),
-            onNext(200, "second"),
-            onNext(300, "third")
-        );
+testObject.subscribe(console.log);
 
-        let result = '';
-        subject.subscribe(value => result = value);
+advanceTime(1000);
+advanceTime(500);
+advanceTime(500);
+advanceTime(999);
+advanceTime(1);
 
-        scheduler.advanceBy(100);
-        assert.equal(result, "first");
-
-        scheduler.advanceBy(100);
-        assert.equal(result, "second");
-
-        scheduler.advanceBy(100);
-        assert.equal(result, "first");
-    });
+function advanceTime(ms) {
+    console.log("Advancing time by", ms, "ms");
+    scheduler.advanceBy(ms);
+}

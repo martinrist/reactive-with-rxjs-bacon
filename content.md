@@ -827,7 +827,39 @@ class: center, middle
 - Another `Scheduler` implementation in RxJS is the `TestScheduler`:
     - Allows us to emulate time and create deterministic tests
 
--
+- A specialization of a `VirtualTimeScheduler`:
+    - Execute actions in _virtual_ time instead of in real time
+    - Scheduled actions are placed in a queue and are assigned a moment in _virtual time_
+    - The scheduler then runs the actions in order when its clock advances
+
+- We can see how this works, and how it might extend to testing:
+
+```javascript
+    const scheduler = new Rx.TestScheduler();
+    const testObject = Rx.Observable.interval(1000, scheduler);
+
+    testObject.subscribe(console.log);
+
+    advanceTime(1000);
+    advanceTime(500);
+    advanceTime(500);
+    advanceTime(999);
+    advanceTime(1);
+
+    function advanceTime(ms) {
+        console.log("Advancing time by", ms, "ms");
+        scheduler.advanceBy(ms);
+    }
+
+    > Advancing time by 1000 ms
+    > 0
+    > Advancing time by 500 ms
+    > Advancing time by 500 ms
+    > 1
+    > Advancing time by 999 ms
+    > Advancing time by 1 ms
+    > 2
+``` 
 
 
 ---
