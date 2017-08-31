@@ -497,8 +497,6 @@ class: center, middle
 
 # Combining Observables
 
-- TODO: Read & write up [here](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/f9902a4b-009b-4806-90c5-755fa9d48cd9.xhtml)
-
 - So far, we've looked at operations just on a single Observable:
     - However, we can combine / compose Observables in various ways
 

@@ -8,6 +8,10 @@ To launch the presentation:
 
 # TODO Items
 
-- Add section on composing multiple streams.
+- Backpressure
+- Schedulers & Testing
+- Error Handling
+- Autocomplete - full example
+- Comparison table
 - Restructure examples to remove numbering.
 - Work out easiest way to run Node.js examples.
