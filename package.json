@@ -11,6 +11,7 @@
     "baconjs": "latest",
     "axios" : "latest",
     "rx" : "latest",
-    "rx-http-request": "latest"
+    "rx-http-request": "latest",
+    "qunit" : "latest"
   }
 }

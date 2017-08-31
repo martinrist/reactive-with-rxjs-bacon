@@ -15,3 +15,4 @@ To launch the presentation:
 - Comparison table
 - Restructure examples to remove numbering.
 - Work out easiest way to run Node.js examples.
+- Standardise use of bacon.js / BaconJS etc.

@@ -752,7 +752,83 @@ class: center, middle
 
 # Schedulers & Testing (RxJS only)
 
-- TODO: From Chapter 5 of 'Reactive Programming with RxJS'
+- `Scheduler`s are part of Rx that allows finer-tuned control over the threading model for notifying `Observer`s:
+    - As such, it's more designed for use in multi-threaded environments
+    - Basically, not used much in Javascript and guidance is to be careful!
+    - Bacon.js doesn't support this
+    - However, it can be useful in testing (upcoming...)
+
+- Each operator in RxJS uses a default `Scheduler` internally, selected to provide best performance in most likely case.
+
+- We can override this using `observeOn(newScheduler)`:
+    - After this, every call to `onNext` happens in the context defined by `newScheduler`
+
+- The `immediate` scheduler emits notifications synchronously, blocking the thread:
+
+```javascript
+    console.log("Before subscription");
+
+    Rx.Observable.range(1, 3)
+        .do(i => console.log("Processing value", i))
+        .observeOn(Rx.Scheduler.immediate)
+        .subscribe(i => console.log("Emitted", i));
+
+    console.log("After subscription");
+
+    > Before subscription
+    > Processing value 1
+    > Emitted 1
+    > Processing value 2
+    > Emitted 2
+    > Processing value 3
+    > Emitted 3
+    > After subscription
+```
+
+- Well-suited for predictable and inexpensive (e.g. `O(1)`) operations
+
+- The `default` scheduler (a.k.a. `async`) schedules work asynchronously via a platform-specific mechanism:
+    - `process.nextTick` in Node.js
+    - `setTimeout` in the browser
+
+- Notice the output difference:
+
+```javascript
+    console.log("Before subscription");
+
+    Rx.Observable.range(1, 3)
+        .do(i => console.log("Processing value", i))
+        .observeOn(Rx.Scheduler.default)
+        .subscribe(i => console.log("Emitted", i));
+
+    console.log("After subscription");
+
+    > Before subscription
+    > Processing value 1
+    > Processing value 2
+    > Processing value 3
+    > After subscription
+    > Emitted 1
+    > Emitted 2
+    > Emitted 3
+```
+
+- Never blocks the event loop, so useful for operations that take longer
+
+---
+
+# Using Schedulers for Testing
+
+- Testing asynchronous behaviour is hard
+
+- Also, accurately testing time-based functions _in real time_ is slow:
+    - e.g. test that error is called after waiting 10s for a response
+
+- Another `Scheduler` implementation in RxJS is the `TestScheduler`:
+    - Allows us to emulate time and create deterministic tests
+
+-
+
 
 ---
 
