@@ -314,7 +314,6 @@ class: center, middle
     // ... from a Node.js EventEmitter
     const file = fs.createReadStream(filePath);
     const fileStream = Bacon.fromEvent(file, 'data');
-    ```
 
     // ... from Promises (e.g. from JQuery AJAX)...
     const agentPromise = $.ajax({ url: "http://httpbin.org/user-agent" });
@@ -332,10 +331,9 @@ class: center, middle
     - `interval` - emits an incrementing integer
     - Better 'no-op' cases for testing and composition - e.g. `never`
     - `from` is more flexible and can create Observables from a more general iterable:
-        - as opposed to Bacon's specific `fromXXX` methods
-        - e.g. ES6 Set and Map objects
-        - Or [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
-
+    - as opposed to Bacon's specific `fromXXX` methods
+    - e.g. ES6 Set and Map objects
+    - Or [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
 
 ---
 
@@ -599,6 +597,7 @@ class: center, middle
     > pink
 ```
 
+---
 
 # Subjects (RxJS only)
 
@@ -821,7 +820,7 @@ class: center, middle
 
 - Testing asynchronous behaviour is hard
 
-- Also, accurately testing time-based functions _in real time_ is slow:
+- Also, accurately testing time-based functions _in real time_ is slow
     - e.g. test that error is called after waiting 10s for a response
 
 - Another `Scheduler` implementation in RxJS is the `TestScheduler`:
@@ -832,8 +831,9 @@ class: center, middle
     - Scheduled actions are placed in a queue and are assigned a moment in _virtual time_
     - The scheduler then runs the actions in order when its clock advances
 
-- We can see how this works, and how it might extend to testing:
+---
 
+- We can see how this works, and how it might extend to testing:
 ```javascript
     const scheduler = new Rx.TestScheduler();
     const testObject = Rx.Observable.interval(1000, scheduler);
@@ -850,7 +850,9 @@ class: center, middle
         console.log("Advancing time by", ms, "ms");
         scheduler.advanceBy(ms);
     }
+```
 
+    ```markdown
     > Advancing time by 1000 ms
     > 0
     > Advancing time by 500 ms
@@ -859,7 +861,7 @@ class: center, middle
     > Advancing time by 999 ms
     > Advancing time by 1 ms
     > 2
-``` 
+    ``` 
 
 
 ---
@@ -905,18 +907,19 @@ class: center, middle
 
 # Comparison Table
 
-- TODO: Add comparison table, with attributes like:
-    - Multi-language
-    - Modularity
-    - Hot observables
-    - Cold observables
-    - Properties
-    - Glitch-free performance
-    - Error terminates Observable
-    - Performance
-    - Generator support?
-    - Angular (+ other framework) bindings?
-    - Scheduler options (no for Bacon because it's just JS)
+
+|                             | Bacon.js | RxJS   |
+| --------------------------- | -------- | ------ |
+| Multi-language              | No       | Yes    |
+| Modularity                  | No       | Yes    |
+| Hot observables             | Yes      | Yes    |
+| Cold observables            | No       | Yes    |
+| Properties                  | Yes      | No     |
+| Error terminates Observable | No       | Yes    |
+| Performance                 | Lower    | Higher |
+| Angular bindings            | ???      | Yes    |
+| Other framework bindings    | ???      | ???    |
+| Scheduler options           | No       | Yes    |
 
 ---
 
