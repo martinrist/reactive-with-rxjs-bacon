@@ -9,9 +9,8 @@
   "author": "",
   "dependencies": {
     "baconjs": "latest",
-    "axios" : "latest",
-    "rx" : "latest",
-    "rx-http-request": "latest",
-    "qunit" : "latest"
+    "axios": "latest",
+    "rx": "latest",
+    "rx-http-request": "latest"
   }
 }
