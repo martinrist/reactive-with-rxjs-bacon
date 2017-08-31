@@ -1,0 +1,7 @@
+.idea
+*.map
+**/modules/*.js
+**/promises/*.js
+node_modules
+dist
+.DS_Store
