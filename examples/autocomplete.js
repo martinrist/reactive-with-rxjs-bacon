@@ -1,53 +1,32 @@
-/*global Rx, QUAKE_URL, L, theMap*/
-
+/*global Rx*/
 
 // Search Wikipedia for a given term
-function searchWikipedia (term) {
+function searchWikipedia(term) {
     return Rx.DOM.jsonpRequest({
-        url: "http://en.wikipedia.org/w/api.php",
-        jsonpCallback: "eqfeed_callback"
-  return $.ajax({
-    url: 'http://en.wikipedia.org/w/api.php',
-    dataType: 'jsonp',
-    data: {
-      action: 'opensearch',
-      format: 'json',
-      search: term
-    }
-  }).promise();
+        url: "http://en.wikipedia.org/w/api.php?action=opensearch&format=json&callback=wikiSearchCallback&search=" + term,
+        jsonpCallback: "wikiSearchCallback"
+    });
 }
 
-  function main() {
-    var $input = $('#textInput'),
-        $results = $('#results');
+function init() {
+
+    const input = document.getElementById("textInput");
+    const results = document.getElementById("results");
 
     // Get all distinct key up events from the input and only fire if long enough and distinct
-    var keyup = Rx.Observable.fromEvent($input, 'keyup')
-      .map(function (e) {
-        return e.target.value; // Project the text from the input
-      })
-      .filter(function (text) {
-        return text.length > 2; // Only if the text is longer than 2 characters
-      })
-      .debounce(750 /* Pause for 750ms */ )
-      .distinctUntilChanged(); // Only if the value has changed
+    const keyup = Rx.Observable
+        .fromEvent(input, 'keyup')
+        .map(e => e.target.value)               // Project the text from the input
+        .filter(text => text.length > 2)        // Only if the text is longer than 2 characters
+        .debounce(750 /* Pause for 750ms */)
+        .distinctUntilChanged(); // Only if the value has changed
 
-    var searcher = keyup.flatMapLatest(searchWikipedia);
+    keyup.subscribe(console.log);
+    const searcher = keyup.flatMapLatest(searchWikipedia)
+        .pluck("response")
+        .map(r => r[1]);
 
-    searcher.subscribe(
-      function (data) {
-        $results
-          .empty()
-          .append ($.map(data[1], function (v) { return $('<li>').text(v); }));
-      },
-      function (error) {
-        $results
-          .empty()
-          .append($('<li>'))
-          .text('Error:' + error);
-      });
-  }
-
-  $(main);
-
+    searcher.subscribe(console.log);
 }
+
+Rx.DOM.ready().subscribe(init);
