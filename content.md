@@ -353,6 +353,7 @@ class: center, middle
     - ... [and others](http://reactivex.io/languages.html)
 
 - We're just going to look at RxJS here
+    - Full disclosure - I've looked at RxJS 4, but RxJS 5 is available
 
 - Modular distribution (unlike bacon.js)
     - `rx.all.js` for the whole lot
