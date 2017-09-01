@@ -881,6 +881,7 @@ class: center, middle
 
 - _Lossy_ strategies use constant memory, whereas _lossless_ ones depend on the buffer size
 
+- Note that some of the following operators have [changed in RxJS 5](https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md#operators-renamed-or-removed)
 ---
 
 # Lossy Strategies
@@ -892,8 +893,6 @@ class: center, middle
     - e.g. rate-limiting execution of handlers on events like resize / scroll
 
 .center[![Marble Diagram - Throttle](images/throttleTimeMarbleDiagram.png)]
-
-.center[(ignore `throttleTime` - a recent API change)]
 
 ---
 
@@ -917,20 +916,18 @@ class: center, middle
 
 .center[![Marble Diagram - Debounce](images/debounceTimeMarbleDiagram.png)]
 
-- All of these are easier to see with an <a href="examples/example14-backpressure.html" target="_blank">example</a>
+- All of these are easier to see with an <a href="examples/example14-backpressure-lossy.html" target="_blank">example</a>
 
 ---
 
 # Lossless Strategies
 
-- `buffer*` methods store data in memory then emit an array containing the buffered data.
+- `buffer*` methods buffer data in memory then emit an array
+    - `bufferWithCount(count)` emits when the buffer reaches `count` items
+    - `bufferWithTime(time)` emits every `time` ms (possibly empty)
+    - `bufferWithTimeOrCount(time, count)` combines them
 
-- `bufferWithCount(count)`
-
-- `bufferWithTime(time)`
-
-- Increase memory requirements
-
+- Again, it's easier to see with an <a href="examples/example14-backpressure-lossless.html" target="_blank">example</a>
 
 ---
 

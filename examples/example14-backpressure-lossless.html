@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lossless Backpressure example</title>
+    <script src="rx.all-4.1.0.js"></script>
+    <script src="rx.dom-7.0.3.js"></script>
+</head>
+<body>
+    <p><button id="clickMeButton">Click me!</button></p>
+
+    <table>
+        <thead>
+            <tr>
+                <td>Raw</td>
+                <td>Time (3s)</td>
+                <td>Count (5)</td>
+                <td>Time (3s) or Count (5)</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><textarea id="numberedLog" cols="20" rows="20"></textarea></td>
+                <td><textarea id="timeBufferedLog" cols="20" rows="20"></textarea></td>
+                <td><textarea id="countBufferedLog" cols="20" rows="20"></textarea></td>
+                <td><textarea id="timeOrCountBufferedLog" cols="20" rows="20"></textarea></td>
+            <tr>
+        </tbody>
+    </table>
+
+</body>
+
+<script>
+
+    function appendOutput(target, text) {
+        target.innerHTML += text + "\n";
+    }
+
+    const button = document.getElementById("clickMeButton");
+    const numberedLog = document.getElementById("numberedLog");
+    const timeBufferedLog = document.getElementById("timeBufferedLog");
+    const countBufferedLog = document.getElementById("countBufferedLog");
+    const timeOrCountBufferedLog = document.getElementById("timeOrCountBufferedLog");
+
+    const rawClickStream = Rx.Observable.fromEvent(button, "click");
+    const numberedClickStream = rawClickStream.scan(((total, e) => total + 1), 0);
+
+    const timeBufferedClickStream = numberedClickStream.bufferWithTime(3000);
+    const countBufferedClickStream = numberedClickStream.bufferWithCount(5);
+    const timeOrCountBufferedClickStream = numberedClickStream.bufferWithTimeOrCount(3000, 5);
+
+    numberedClickStream.subscribe(e => appendOutput(numberedLog, "Click " + e));
+    timeBufferedClickStream.subscribe(e => appendOutput(timeBufferedLog, "Clicks " + e));
+    countBufferedClickStream.subscribe(e => appendOutput(countBufferedLog, "Clicks " + e));
+    timeOrCountBufferedClickStream.subscribe(e => appendOutput(timeOrCountBufferedLog, "Clicks " + e));
+
+</script>
+</html>

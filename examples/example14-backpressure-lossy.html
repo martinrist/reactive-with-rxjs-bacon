@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Backpressure example</title>
+    <title>Lossy Backpressure example</title>
     <script src="rx.all-4.1.0.js"></script>
     <script src="rx.dom-7.0.3.js"></script>
 </head>
@@ -47,9 +47,9 @@
     const rawClickStream = Rx.Observable.fromEvent(button, "click");
     const numberedClickStream = rawClickStream.scan(((total, e) => total + 1), 0);
 
-    const throttledClickStream = numberedClickStream.throttle(parseInt(interval));
-    const sampledClickStream = numberedClickStream.sample(parseInt(interval));
-    const debouncedClickStream = numberedClickStream.debounce(parseInt(interval));
+    const throttledClickStream = numberedClickStream.throttle(interval);
+    const sampledClickStream = numberedClickStream.sample(interval);
+    const debouncedClickStream = numberedClickStream.debounce(interval);
 
     numberedClickStream.subscribe(e => appendOutput(numberedLog, "Click " + e));
     throttledClickStream.subscribe(e => appendOutput(throttledLog, "Click " + e));
