@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backpressure example</title>
+    <script src="rx.all-4.1.0.js"></script>
+    <script src="rx.dom-7.0.3.js"></script>
+</head>
+<body>
+    <p><button id="clickMeButton">Click me!</button></p>
+
+    <table>
+        <thead>
+            <tr>
+                <td>Raw</td>
+                <td>Throttled</td>
+                <td>Sampled</td>
+                <td>Debounced</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><textarea id="numberedLog" cols="15" rows="20"></textarea></td>
+                <td><textarea id="throttledLog" cols="15" rows="20"></textarea></td>
+                <td><textarea id="sampledLog" cols="15" rows="20"></textarea></td>
+                <td><textarea id="debouncedLog" cols="15" rows="20"></textarea></td>
+            <tr>
+        </tbody>
+    </table>
+
+</body>
+
+<script>
+
+    function appendOutput(target, text) {
+        target.innerHTML += text + "\n";
+    }
+
+    const button = document.getElementById("clickMeButton");
+    const numberedLog = document.getElementById("numberedLog");
+    const throttledLog = document.getElementById("throttledLog");
+    const sampledLog = document.getElementById("sampledLog");
+    const debouncedLog = document.getElementById("debouncedLog");
+
+    const interval = 1000;
+
+    const rawClickStream = Rx.Observable.fromEvent(button, "click");
+    const numberedClickStream = rawClickStream.scan(((total, e) => total + 1), 0);
+
+    const throttledClickStream = numberedClickStream.throttle(parseInt(interval));
+    const sampledClickStream = numberedClickStream.sample(parseInt(interval));
+    const debouncedClickStream = numberedClickStream.debounce(parseInt(interval));
+
+    numberedClickStream.subscribe(e => appendOutput(numberedLog, "Click " + e));
+    throttledClickStream.subscribe(e => appendOutput(throttledLog, "Click " + e));
+    sampledClickStream.subscribe(e => appendOutput(sampledLog, "Click " + e));
+    debouncedClickStream.subscribe(e => appendOutput(debouncedLog, "Click " + e));
+
+</script>
+</html>

@@ -8,7 +8,6 @@ To launch the presentation:
 
 # TODO Items
 
-- Backpressure
 - Error Handling
 - Autocomplete - full example
 - Comparison table

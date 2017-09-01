@@ -868,7 +868,68 @@ class: center, middle
 
 # Backpressure
 
-- TODO: [Write up chapter](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/d9651fd2-fff2-4dee-82de-6bf1eddff71b.xhtml)
+- What happens if our `Observable` emits events faster than our `Observer` can process them?
+    - Handling mouse move events
+    - Autocomplete - we don't want to initiate an Ajax request on every `keyup` event
+    - Rendering tweets arriving on a hashtag to make them human-readable
+
+- Two main strategies for handling this 'backpressure':
+    - _Lossy_ - discarding events
+    - _Lossless_ - queue / buffer events or batch processing
+
+- Bacon.js and RxJS have similar methods for dealing with these cases
+
+- _Lossy_ strategies use constant memory, whereas _lossless_ ones depend on the buffer size
+
+---
+
+# Lossy Strategies
+
+- `throttle(interval)`
+    - Emits the first item from the source
+    - Then ignores subsequent items until `interval` ms have passed
+    - Then starts again
+    - e.g. rate-limiting execution of handlers on events like resize / scroll
+
+.center[![Marble Diagram - Throttle](images/throttleTimeMarbleDiagram.png)]
+
+.center[(ignore `throttleTime` - a recent API change)]
+
+---
+
+# Lossy Strategies
+
+- `sample(interval)`
+    - Every `interval` ms it samples the source
+    - And emits the latest item emitted by the source
+    - e.g. sampling values from a stock ticker every 5 seconds
+
+.center[![Marble Diagram - Sample](images/sampleTimeMarbleDiagram.png)]
+
+---
+
+# Lossy Strategies
+
+- `debounce(interval)`:
+    - Emits an item from the source `Observable` if no intervening item has been emitted after `interval` ms
+    - Basically, if the source has been 'quiet' for `interval` ms
+    - e.g. waiting for 0.5s after a user has finished typing
+
+.center[![Marble Diagram - Debounce](images/debounceTimeMarbleDiagram.png)]
+
+- All of these are easier to see with an <a href="examples/example14-backpressure.html" target="_blank">example</a>
+
+---
+
+# Lossless Strategies
+
+- `buffer*` methods store data in memory then emit an array containing the buffered data.
+
+- `bufferWithCount(count)`
+
+- `bufferWithTime(time)`
+
+- Increase memory requirements
 
 
 ---
