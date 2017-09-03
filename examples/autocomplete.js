@@ -29,12 +29,17 @@ function init() {
         .debounce(750 /* Pause for 750ms */)
         .distinctUntilChanged(); // Only if the value has changed
 
+    keyup.subscribe(() => results.innerHTML = "");
+
     const searchResultsStream = keyup.flatMapLatest(searchWikipedia)
         .pluck("response");
 
-    // Clear the results when we get a new response
     searchResultsStream.subscribe(
-        ()    => results.innerHTML = "",
+        (res) => {
+            if (res[1].length === 0) {
+                results.innerHTML = "No results found";
+            }
+        },
         (err) => {
             console.log("Error calling search", err);
             results.innerHTML = "An error occurred";
