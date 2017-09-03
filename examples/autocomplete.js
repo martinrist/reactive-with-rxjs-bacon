@@ -9,6 +9,13 @@ function searchWikipedia(term) {
     });
 }
 
+function createEntryLink(result) {
+    const anchor = document.createElement("a");
+    anchor.innerHTML = result[0];
+    anchor.setAttribute("href", result[1]);
+    return anchor;
+}
+
 function init() {
 
     const input = document.getElementById("textInput");
@@ -22,19 +29,29 @@ function init() {
         .debounce(750 /* Pause for 750ms */)
         .distinctUntilChanged(); // Only if the value has changed
 
-    const searcher = keyup.flatMapLatest(searchWikipedia)
-        .pluck("response")
-        .map(r => r[1]);
+    const searchResultsStream = keyup.flatMapLatest(searchWikipedia)
+        .pluck("response");
 
-    searcher.subscribe(rs => {
-        console.log("Got results:", rs);
+    // Clear the results when we get a new response
+    searchResultsStream.subscribe(() => {
         results.innerHTML = "";
-        rs.forEach(r => {
-            const item = document.createElement("li");
-            item.textContent = r;
-            results.appendChild(item);
-        });
     });
+
+    const searchResultTitles = searchResultsStream
+        .flatMap(r => Rx.Observable.from(r[1]));
+
+    const searchResultLinks = searchResultsStream
+        .flatMap(r => Rx.Observable.from(r[3]));
+
+    const searchResults = searchResultTitles.zip(searchResultLinks);
+
+    searchResults.subscribe(entry => {
+        console.log("Got entry:", entry);
+        const listItem = document.createElement("li");
+        listItem.appendChild(createEntryLink(entry));
+        results.appendChild(listItem);
+    });
+
 }
 
 Rx.DOM.ready().subscribe(init);
