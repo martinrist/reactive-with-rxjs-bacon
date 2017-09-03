@@ -37,10 +37,10 @@
     }
 
     const button = document.getElementById("clickMeButton");
-    const numberedLog = document.getElementById("numberedLog");
-    const timeBufferedLog = document.getElementById("timeBufferedLog");
-    const countBufferedLog = document.getElementById("countBufferedLog");
-    const timeOrCountBufferedLog = document.getElementById("timeOrCountBufferedLog");
+    const numberedLogElement = document.getElementById("numberedLog");
+    const timeBufferedLogElement = document.getElementById("timeBufferedLog");
+    const countBufferedLogElement = document.getElementById("countBufferedLog");
+    const timeOrCountBufferedLogElement = document.getElementById("timeOrCountBufferedLog");
 
     const rawClickStream = Rx.Observable.fromEvent(button, "click");
     const numberedClickStream = rawClickStream.scan(((total, e) => total + 1), 0);
@@ -49,10 +49,10 @@
     const countBufferedClickStream = numberedClickStream.bufferWithCount(5);
     const timeOrCountBufferedClickStream = numberedClickStream.bufferWithTimeOrCount(3000, 5);
 
-    numberedClickStream.subscribe(e => appendOutput(numberedLog, "Click " + e));
-    timeBufferedClickStream.subscribe(e => appendOutput(timeBufferedLog, "Clicks " + e));
-    countBufferedClickStream.subscribe(e => appendOutput(countBufferedLog, "Clicks " + e));
-    timeOrCountBufferedClickStream.subscribe(e => appendOutput(timeOrCountBufferedLog, "Clicks " + e));
+    numberedClickStream.subscribe(e => appendOutput(numberedLogElement, "Click " + e));
+    timeBufferedClickStream.subscribe(e => appendOutput(timeBufferedLogElement, "Clicks " + e));
+    countBufferedClickStream.subscribe(e => appendOutput(countBufferedLogElement, "Clicks " + e));
+    timeOrCountBufferedClickStream.subscribe(e => appendOutput(timeOrCountBufferedLogElement, "Clicks " + e));
 
 </script>
 </html>

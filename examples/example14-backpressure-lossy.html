@@ -37,10 +37,10 @@
     }
 
     const button = document.getElementById("clickMeButton");
-    const numberedLog = document.getElementById("numberedLog");
-    const throttledLog = document.getElementById("throttledLog");
-    const sampledLog = document.getElementById("sampledLog");
-    const debouncedLog = document.getElementById("debouncedLog");
+    const numberedLogElement = document.getElementById("numberedLog");
+    const throttledLogElement = document.getElementById("throttledLog");
+    const sampledLogElement = document.getElementById("sampledLog");
+    const debouncedLogElement = document.getElementById("debouncedLog");
 
     const interval = 1000;
 
@@ -51,10 +51,10 @@
     const sampledClickStream = numberedClickStream.sample(interval);
     const debouncedClickStream = numberedClickStream.debounce(interval);
 
-    numberedClickStream.subscribe(e => appendOutput(numberedLog, "Click " + e));
-    throttledClickStream.subscribe(e => appendOutput(throttledLog, "Click " + e));
-    sampledClickStream.subscribe(e => appendOutput(sampledLog, "Click " + e));
-    debouncedClickStream.subscribe(e => appendOutput(debouncedLog, "Click " + e));
+    numberedClickStream.subscribe(e => appendOutput(numberedLogElement, "Click " + e));
+    throttledClickStream.subscribe(e => appendOutput(throttledLogElement, "Click " + e));
+    sampledClickStream.subscribe(e => appendOutput(sampledLogElement, "Click " + e));
+    debouncedClickStream.subscribe(e => appendOutput(debouncedLogElement, "Click " + e));
 
 </script>
 </html>
