@@ -938,16 +938,62 @@ class: center, middle
 
 - TODO: Complete section from [book](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/dcd88f19-083b-4279-88cd-1a678dc61487.xhtml)
 
-* In RxJS:
-    - `.subscribe(onNextHandler, errorHandler, completionHandler)`
-    - Errors terminate stream
+- Previously, we've just seen simple subscriptions that just handle successes:
+    - In the case of errors, RxJS and Bacon differ in their default behaviours
 
-- In bacon.js:
-    - the Error event does not terminate a stream.
-    - So, a stream may contain multiple errors.
-    - To me, this makes more sense than always terminating the stream on error;
-    - this way the application developer has more direct control over error handling.
-    - You can always use `stream.endOnError()` to get a stream that ends on error!
+-  In RxJS, we can provide multiple handlers when we `subscribe`.  The error terminates
+```javascript
+    const observable = Rx.Observable
+        .from([1, 2, 3])
+        .concat(Rx.Observable.throw(new Error("An error occurred")))
+        .concat(Rx.Observable.from([4, 5]));
+
+    observable.subscribe(
+        i   => console.log("Received:", i),
+        err => console.log("Error thrown:", err.message),
+        ()  => console.log("Completed"));
+
+    > Received: 1
+    > Received: 2
+    > Received: 3
+    > Error thrown: An error occurred
+```
+
+- Note how the error terminates the stream - the completion handler doesn't fire
+
+- Now, the same in Bacon.js:
+```javascript
+    const eventStream = Bacon.fromArray([1, 2, 3])
+        .concat(Bacon.once(new Bacon.Error("An error occurred")))
+        .concat(Bacon.fromArray([4, 5]));
+
+    eventStream.log();
+
+    > 1
+    > 2
+    > 3
+    > <error> An error occurred
+    > 4
+    > 5
+    > <end>
+```
+
+- Note that the error doesn't terminate the stream, and we go on to get the completion
+
+- We can (almost) get the original RxJS-style behaviour back using `endOnError()`, but we still get the completion event:
+```javascript
+    const eventStream = Bacon.fromArray([1, 2, 3])
+        .concat(Bacon.once(new Bacon.Error("An error occurred")))
+        .concat(Bacon.fromArray([4, 5]));
+
+    eventStream.endOnError().log();
+
+    > 1
+    > 2
+    > 3
+    > <error> An error occurred
+    > <end>
+```
 
 ---
 
