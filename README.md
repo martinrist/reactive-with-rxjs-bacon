@@ -9,11 +9,10 @@ To launch the presentation:
 # TODO Items
 
 - Error Handling
-- Autocomplete - full example
 - Comparison table
 - Split up slides
 - Restructure examples to remove numbering
-- Work out easiest way to run Node.js examples
+- Autocomplete example - review & tidy
 - Standardise use of bacon.js / BaconJS etc
 - Add note / text about RxJS 4 vs 5 and some API / method name changes
 - Add something about the upcoming ES7 Observable spec and how RxJS 5 has made some changes to start aligning
