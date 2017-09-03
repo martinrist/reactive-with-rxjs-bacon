@@ -1,5 +1,4 @@
 .idea
-*.map
 **/modules/*.js
 **/promises/*.js
 node_modules
