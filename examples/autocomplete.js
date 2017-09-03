@@ -11,8 +11,8 @@ function searchWikipedia(term) {
 
 function createEntryLink(result) {
     const anchor = document.createElement("a");
-    anchor.innerHTML = result[0];
-    anchor.setAttribute("href", result[1]);
+    anchor.innerHTML = result["title"];
+    anchor.setAttribute("href", result["link"]);
     return anchor;
 }
 
@@ -43,7 +43,11 @@ function init() {
     const searchResultLinks = searchResultsStream
         .flatMap(r => Rx.Observable.from(r[3]));
 
-    const searchResults = searchResultTitles.zip(searchResultLinks);
+    const searchResults = searchResultTitles.zip(
+        searchResultLinks,
+        (t, l) => {
+            return {title: t, link: l};
+        });
 
     searchResults.subscribe(entry => {
         console.log("Got entry:", entry);
