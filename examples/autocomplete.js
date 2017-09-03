@@ -6,7 +6,7 @@ function searchWikipedia(term) {
     return Rx.DOM.jsonpRequest({
         url: "http://en.wikipedia.org/w/api.php?action=opensearch&callback=wikiSearchCallback&search=" + term,
         jsonpCallback: "wikiSearchCallback"
-    });
+    }).retry(3);
 }
 
 function createEntryLink(result) {
@@ -33,9 +33,13 @@ function init() {
         .pluck("response");
 
     // Clear the results when we get a new response
-    searchResultsStream.subscribe(() => {
-        results.innerHTML = "";
-    });
+    searchResultsStream.subscribe(
+        ()    => results.innerHTML = "",
+        (err) => {
+            console.log("Error calling search", err);
+            results.innerHTML = "An error occurred";
+        }
+    );
 
     const searchResultTitles = searchResultsStream
         .flatMap(r => Rx.Observable.from(r[1]));
