@@ -6,6 +6,14 @@ To launch the presentation:
 2. Navigate to [the start page](http://localhost:8000).
 
 
+# Running the Node.JS examples:
+
+```bash
+cd examples
+node install
+node $EXAMPLE_FILE
+```
+
 # TODO Items
 
 - Error Handling
