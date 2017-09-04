@@ -90,9 +90,9 @@ class: center, middle
     document.addEventListener("click", console.log);
 ```
 
-- With Bacon (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>) we use a `EventStream`:
+- With Bacon.js (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>) we use a `EventStream`:
 ```javascript
-    // Create a Bacon EventStream
+    // Create a Bacon.js EventStream
     const eventStream = Bacon.fromEvent(document, "click");
 
     // Subscribe to the EventStream
@@ -125,7 +125,7 @@ class: center, middle
 
 - With Bacon.js we can apply a `filter` to the original stream:
 ```javascript
-    // Create a Bacon EventStream
+    // Create a Bacon.js EventStream
     const eventStream = Bacon.fromEvent(document, "click");
 
     // Filter to create a new stream with only the 'right-hand' clicks
@@ -158,12 +158,12 @@ class: center, middle
         console.log(clickToCoords(e)));
 ```
 
-- With Bacon, this is just a `map`:
+- With Bacon.js, this is just a `map`:
 ```javascript
     const clickToCoords =
         e => "(" + e.clientX + ", " + e.clientY + ")";
 
-    // Create a Bacon EventStream
+    // Create a Bacon.js EventStream
     const eventStream = Bacon.fromEvent(document, "click");
 
     // Convert clicks to coordinates
@@ -188,7 +188,7 @@ class: center, middle
     });
 ```
 
-- Here's the Bacon version:
+- Here's the Bacon.js version:
 ```javascript
     const eventStream = Bacon.fromEvent(document, "click");
     const rhsEventStream = eventStream.filter(
@@ -257,18 +257,18 @@ class: center, middle
 
 ---
 
-# Bacon Properties
+# Bacon.js Properties
 
-- Earlier, we saw examples of bacon.js's `EventStream` - a type of observable
+- Earlier, we saw examples of Bacon.js's `EventStream` - a type of observable
 
-- The other flavour of observable in bacon.js is the `Property`:
+- The other flavour of observable in Bacon.js is the `Property`:
     - Basically, an `EventStream` with the concept of 'current value'
 
 - Let's say we want to adapt the earlier examples to _count_ the number of clicks as well
     - Still have the `EventStream` for the clicks
     - But we also want a 'click count' `Property`, whose value increments on each click
 
-- We can do this using `scan`, Bacon's version of `reduce`:
+- We can do this using `scan`, the Bacon.js version of `reduce`:
 ```javascript
     const clickStream = Bacon.fromEvent(document, "click");
     const clickCount = clickStream.scan(0, (acc, e) => acc + 1);
@@ -330,8 +330,8 @@ class: center, middle
 - RxJS has all of these, and more, e.g.:
     - `interval` - emits an incrementing integer
     - Better 'no-op' cases for testing and composition - e.g. `never`
-    - `from` is more flexible and can create Observables from a more general iterable:
-    - as opposed to Bacon's specific `fromXXX` methods
+    - `from` is more flexible and can create Observables from a more general iterable
+    - as opposed to specific `fromXXX` methods in Bacon.js
     - e.g. ES6 Set and Map objects
     - Or [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
 
@@ -341,7 +341,7 @@ class: center, middle
 
 - RxJS is the JavaScript implementation of [Reactive Extensions](http://reactivex.io)
 
-- In contract to bacon.js (a specific implementation), Reactive Extensions is an API
+- In contract to Bacon.js (a specific implementation), Reactive Extensions is an API
 
 - Multiple implementations exist:
     - Rx.NET (which is where it came from)
@@ -355,7 +355,7 @@ class: center, middle
 - We're just going to look at RxJS here
     - Full disclosure - I've looked at RxJS 4, but RxJS 5 is available
 
-- Modular distribution (unlike bacon.js)
+- Modular distribution (unlike Bacon.js)
     - `rx.all.js` for the whole lot
     - ... all the way down to `rx.lite.js` for a lightweight version
     - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators
@@ -370,7 +370,7 @@ class: center, middle
 
 - Everything is an `Observable`
     - No distinction between `EventStream` and `Property`
-    - This is one of the main differences between bacon.js and RxJS
+    - This is one of the main differences between Bacon.js and RxJS
 
 - Bacon.js uses the term 'subscriber' to refer to the object listening to incoming data
     - RxJS uses `Observer`
@@ -407,7 +407,7 @@ class: center, middle
 
 # Hot vs Cold Observables
 
-- In bacon.js, an observable only emits a value when a subscriber subscribes to it:
+- In Bacon.js, an observable only emits a value when a subscriber subscribes to it:
 ```javascript
     const stream = Bacon.interval(1000);
     console.log("Stream created");
@@ -480,8 +480,8 @@ class: center, middle
 
 - It's possible to convert a _cold observable_ to a _hot observable_
 
-- This is another one of the key differences between bacon.js and RxJS:
-    - bacon.js has no _cold observables_, so EventStreams and Properties are consistent among subscribers
+- This is another one of the key differences between Bacon.js and RxJS:
+    - Bacon.js has no _cold observables_, so EventStreams and Properties are consistent among subscribers
     - RxJS has more options, therefore more flexible
     - But we need to be careful to avoid unexpected behaviour
     - Need to pay attention to what kind of Observable we're using
@@ -502,7 +502,7 @@ class: center, middle
 - Simplest example is concatenating or merging `Observables` to create a new one:
     - `concat()` - appends events from second Observable onto end of first
     - `merge()` - interleaves items from the various sources
-    - Same method for `EventStream`s in bacon.js
+    - Same method for `EventStream`s in Bacon.js
 
 - The difference is clear from the marble diagrams:
     - TODO: Add concat diagram from http://reactivex.io/documentation/operators/concat.html
@@ -519,7 +519,7 @@ class: center, middle
 ```
 
 - We can combine events from two `Observable`s using a function:
-    - This behaviour differs between bacon.js and RxJS
+    - This behaviour differs between Bacon.js and RxJS
 
 - To see how, consider this example:
 ```javascript
@@ -556,7 +556,7 @@ class: center, middle
     > 44
 ```
 
-- bacon.js is giving us 'atomic' updates, whereas we're getting glitches in RxJS
+- Bacon.js is giving us 'atomic' updates, whereas we're getting glitches in RxJS
 
 - With RxJS, we can get around this, by using `zip`:
 ```javascript
@@ -573,14 +573,14 @@ class: center, middle
     > 44
 ```
 
-- Bacon has stronger, 'glitch-free' event delivery semantics:
+- Bacon.js has stronger, 'glitch-free' event delivery semantics:
     - But the price is some performance overhead
     - Generally, RxJS is considered more performant than bacon.js
     - [Kefir](https://github.com/rpominov/kefir) is inspired by an attempt to address this.
 
 - A final example showing composition of Observables:
     - Iterate through an array emitting values at an interval
-    - Neither bacon.js nor RxJS has a built in function to do this
+    - Neither Bacon.js nor RxJS has a built in function to do this
     - Instead we can combine streams:
 
 ```javascript
@@ -937,7 +937,7 @@ class: center, middle
 # Error Handling
 
 - Previously, we've just seen simple subscriptions that just handle successes:
-    - In the case of errors, RxJS and Bacon differ in their default behaviours
+    - In the case of errors, RxJS and Bacon.js differ in their default behaviours
 
 -  In RxJS, we can provide multiple handlers when we `subscribe`.  The error terminates
 ```javascript
