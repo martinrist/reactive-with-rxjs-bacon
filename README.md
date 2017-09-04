@@ -16,7 +16,6 @@ node $EXAMPLE_FILE
 
 # TODO Items
 
-- Error Handling
 - Comparison table
 - Split up slides
 - Restructure examples to remove numbering

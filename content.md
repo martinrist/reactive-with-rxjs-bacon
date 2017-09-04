@@ -936,8 +936,6 @@ class: center, middle
 
 # Error Handling
 
-- TODO: Complete section from [book](https://www.safaribooksonline.com/library/view/mastering-reactive-javascript/9781786463388/dcd88f19-083b-4279-88cd-1a678dc61487.xhtml)
-
 - Previously, we've just seen simple subscriptions that just handle successes:
     - In the case of errors, RxJS and Bacon differ in their default behaviours
 
@@ -994,6 +992,10 @@ class: center, middle
     > <error> An error occurred
     > <end>
 ```
+
+- Various options for what to do in the case of errors, including:
+    - `retry(attempts)` - re-executes the source `Observable`
+    - `catch(fallbackObservable)` - falls back to a replacement Observable
 
 ---
 
