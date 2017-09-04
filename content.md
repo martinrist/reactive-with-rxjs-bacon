@@ -1001,14 +1001,21 @@ class: center, middle
 
 # AutoComplete with RxJS
 
-- Pull stuff together, using
-    - Debounce
-    - JSON / Ajax
-    - DOM updates
+- One of the canonical examples of reactive programming is 'AutoComplete':
+    - User enters search term
+    - If longer than two characters, search Wikipedia and present results
+    - 'Wait' for user to stop typing for a bit before querying
+    - If no results, notify the user
+    - If an error occurs, notify the user
 
-- TODO: Complete example
+- Pulls together a number of techniques we've seen here:
+    - Creating `Observable`s from DOM events
+    - Filtering (>2 characters)
+    - Backpressure - waiting for `keyup` events to settle down before querying
+    - Handling responses
+    - Error handling - retrying and notification
 
-- Based on https://github.com/Reactive-Extensions/RxJS/tree/master/examples/autocomplete
+- See <a href="examples/autocomplete.html" target="_blank">example</a>
 
 ---
 
