@@ -286,7 +286,7 @@ class: center, middle
 
 ---
 
-# Processing Limited Events
+# Limiting Events
 
 - Log only the first 5 clicks...
     - ... and make sure you dispose of the listener at the end
@@ -320,7 +320,7 @@ class: center, middle
 
 ---
 
-# Processing Limited Events
+# Limiting Events
 
 - Bacon.js has the `take` operator, to take values then end the stream (<a href="examples/example5-firstFiveMouseClicks-bacon.html" target="_blank">Example</a>)
 ```javascript
@@ -481,10 +481,14 @@ class: center, middle
 
 - RxJS is the JavaScript implementation of [Reactive Extensions](http://reactivex.io)
 
-- In contract to Bacon.js (a specific implementation), Reactive Extensions is an API
+--
+
+- In contract to Bacon.js, Reactive Extensions is an API
+
+--
 
 - Multiple implementations exist:
-    - Rx.NET (which is where it came from)
+    - Rx.NET (its origins)
     - RxJava
     - RxJS
     - RxScala
@@ -492,13 +496,13 @@ class: center, middle
     - RxSwift
     - ... [and others](http://reactivex.io/languages.html)
 
-- We're just going to look at RxJS here
-    - Full disclosure - I've looked at RxJS 4 here, but RxJS 5 is available
+--
 
-- Modular distribution (unlike Bacon.js)
+- Unlike Bacon.js, RxJS is distributed as modules
     - `rx.all.js` for the whole lot
     - ... all the way down to `rx.lite.js` for a lightweight version
-    - https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators
+
+--
 
 - RxJS also has other modules that add further bindings:
     - [RxJS-DOM](https://github.com/Reactive-Extensions/RxJS-DOM) - DOM Bindings, JSONP, WebSockets, WebWorkers
@@ -512,24 +516,43 @@ class: center, middle
     - No distinction between `EventStream` and `Property`
     - This is one of the main differences between Bacon.js and RxJS
 
+--
+
 - Bacon.js uses the term 'subscriber' to refer to the object listening to incoming data
     - RxJS uses `Observer`
 
-- A lot of the core APIs are similar - e.g. `map`, `filter`, `scan`, with some minor differences (e.g. argument order)
+--
 
-- Here's the 'log and count mouse clicks on the right' example in RxJS:
+- A lot of the core APIs are similar - e.g. `map`, `filter`, `scan`
+    - Some minor differences (e.g. argument order)
 
+---
+
+# Terminology Changes
+
+- Here's the 'log and count mouse clicks on the right' example in Bacon
 ```javascript
-    const rhsCoordStream =
-           Rx.Observable.fromEvent(document, "click")
+    const rhsStream = Bacon.fromEvent(document, "click")
+            .filter(e => e.clientX > window.innerWidth / 2)
+            .map(clickToCoords);
+    const rhsCountStream = rhsStream.scan(
+            0, (acc, e) => acc + 1);
+    rhsStream.log();
+    rhsCountStream.log();
+```
+
+--
+
+- ... and in RxJS
+```javascript
+    const rhsStream = Rx.Observable.fromEvent(document, "click")
                .filter(e => e.clientX > window.innerWidth / 2)
                .map(clickToCoords);
-
     // `scan` takes the initial value as the second arg
-    const rhsCountStream = rhsCoordStream.scan(((total, e) => total + 1), 0);
-
+    const rhsCountStream = rhsStream.scan(
+        ((total, e) => total + 1), 0);
     // RxJS has no `log` function, so we have to `subscribe`
-    rhsCoordStream.subscribe(console.log);
+    rhsStream.subscribe(console.log);
     rhsCountStream.subscribe(console.log);
 ```
 
@@ -539,9 +562,9 @@ class: center, middle
 
 - 'Marble Diagrams' are often used to visualise Observables and operators
 
-![Marble Diagram](images/marbleDiagram.png)
+.center[![Marble Diagram](images/marbleDiagram.png)]
 
-- Lots of examples at [RxJS Marbles](http://rxmarbles.com):
+- Lots of examples at [RxJS Marbles](http://rxmarbles.com) and [Rx Visualizer](https://rxviz.com)
 
 ---
 
@@ -1185,3 +1208,5 @@ class: center, middle
 * [Andre Staltz - 'Introduction to Reactive Programming' Course](https://egghead.io/courses/introduction-to-reactive-programming)
 * [BaconJS for RxJS Users](https://baconjs.github.io/api.html#for-rxjs-users)
 * [RxJS for Bacon.js Users](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md)
+* [RxJS Marbles](http://rxmarbles.com)
+* [Rx Visualizer](https://rxviz.com)
