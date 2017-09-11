@@ -1037,10 +1037,11 @@ class: center, middle
 
 ---
 
-# Links
+# Links & Resources
 
-* [Why Bacon?](https://github.com/baconjs/bacon.js#why-bacon)
+* [Bacon.js](https://baconjs.github.io)
+* [ReactiveX](http://reactivex.io)
+* [Andre Staltz - 'The introduction to Reactive Programming you've been missing'](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)
+* [Andre Staltz - 'Introduction to Reactive Programming' Course](https://egghead.io/courses/introduction-to-reactive-programming)
 * [BaconJS for RxJS Users](https://baconjs.github.io/api.html#for-rxjs-users)
 * [RxJS for Bacon.js Users](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md)
-* ['Reactive JavaScript Programming' video](https://www.safaribooksonline.com/library/view/reactive-javascript-programming/9781787284913/)
-* [RxJS 4.0 Book](https://xgrommx.github.io/rx-book)
