@@ -2,56 +2,82 @@ class: center, middle
 
 # Reactive Programming with Bacon.js and RxJS
 
-
 ---
 
 # Agenda
 
-1. Introduction
-2. Deep-dive
-3. ...
+- Intro to Reactive Programming
+
+- Overview of some of the key concepts
+
+- Introduction to two commonly-used frameworks
+    - Bacon.js
+    - RxJS
+
+- Show some code, discuss the differences
+
 
 ---
 
-# What is Reactive Programming?
+# Reactive Programming
 
 - Wikipedia : "An asynchronous programming paradigm concerned with data streams and the propagation of change"
 
-- A different way of thinking about asynchronous data, e.g.:
-    - Mouse clicks
-    - Field updates
-    - Server-side data
-    - Timer 'ticks'
-    - Other page events 
+--
+
+- TODO: Add quote from TechExeter talk
+
+--
+
+- A different way of thinking about different types of asynchronous data:
+  - Mouse clicks
+  - Field updates
+  - Server-side data
+  - Timer 'ticks'
+  - Other page events
+
+--
 
 - Designed to be an easier, clearer and more expressive way of handling complex interactions between events
 
-- Another approach to avoiding 'callback hell'
 
-- The central abstraction is the 'observable':
-    - Represents a stream of events that can be observed and reacted to
+---
+
+# Central Abstractions
+
+- The central abstraction is the Observable
+    - Represents a stream of events that can be _observed_ and _reacted_ to
     - Events can be of different types and have different sources
-    - Reactive Programming abstracts across these different sources so they can be handled in the same way
+    - Reactive Programming abstracts across these different sources
+    - ... so they can be handled in the same way
 
-- Observables can be operated on 'as a whole', rather than individual events, e.g.:
-    - merging two streams
-    - filtering events out of a stream
-    - accruing state (e.g. counters)
+--
 
-- Things can 'subscribe' to streams to be notified and take action
-    - Separates event flow and side effects
+- Observables can be operated on as a whole, rather than as individual events
+    - _transforming_ every event in a stream
+    - _merging_ two streams
+    - _filtering_ events out of a stream
+    - _accruing_ state (e.g. counters)
 
-- Can think of this in terms of dependent things _reacting_ to changes in their dependencies:
+--
+
+- Things can 'subscribe' to streams to be notified and take action on an event
+    - The subscriptions contain the side-effects
+    - e.g. DOM manipulation
+    - This results in clean separation between event flow and side effects
+
+--
+
+- Dependent things _react_ to changes in their dependencies
     - Rather than the data sources _pushing_ data into their dependents
 
 ---
 
-# The Original Reactive System
+# The Original RP System
 
-- The spreadsheet
+--
 
-- Cells declare their dependencies on other cells and react to changes automatically
-
+.center[![](images/spreadsheet.png)]
 
 ---
 
