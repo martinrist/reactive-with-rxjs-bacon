@@ -346,7 +346,7 @@ class: center, middle
 
 ---
 
-# Review
+# So far...
 
 - Event Streams:
     - Are potentially infinite
@@ -358,7 +358,7 @@ class: center, middle
 
 - Sound familiar?
     - This is often why this is sometimes referred to as 'Functional Reactive Programming' (FRP)
-    - Although, just 'Reactive Programming' is
+    - Although, just 'Reactive Programming' is more typical
 
 --
 
