@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Example 4 - RHS Mouse Clicks with Coordinates (Traditional)</title>
+</head>
+<body></body>
+
+<script>
+    const clickToCoords =
+        e => "(" + e.clientX + ", " + e.clientY + ")";
+
+    document.addEventListener("click", e => {
+        if (e.clientX > window.innerWidth / 2) {
+            console.log(clickToCoords(e));
+        }
+    });
+</script>
+
+</html>

@@ -2,21 +2,27 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Example 2 - RHS Mouse Clicks (Bacon.js)</title>
+    <title>Example 4 - RHS Mouse Clicks with Coordinates (Bacon.js)</title>
     <script src="bacon-0.7.91.js"></script>
 </head>
 <body></body>
 
 <script>
+    const clickToCoords =
+        e => "(" + e.clientX + ", " + e.clientY + ")";
+
     // Create a Bacon EventStream
     const eventStream = Bacon.fromEvent(document, "click");
 
-    // Filter to create a new stream with only the 'right-hand' clicks
+    // Filter out the LHS clicks
     const rhsEventStream = eventStream.filter(
         e => e.clientX > window.innerWidth / 2);
 
+    // Convert clicks to coordinates
+    const coordStream = rhsEventStream.map(clickToCoords);
+
     // Subscribe to the EventStream
-    rhsEventStream.onValue(console.log);
+    coordStream.log();
 </script>
 
 </html>

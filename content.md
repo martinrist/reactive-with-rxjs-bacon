@@ -11,10 +11,10 @@ class: center, middle
 - Overview of some of the key concepts
 
 - Introduction to two commonly-used frameworks
-    - Bacon.js
-    - RxJS
 
-- Show some code, discuss the differences
+- Discuss some of the key differences between the frameworks
+
+- Show some code examples
 
 
 ---
@@ -45,7 +45,7 @@ class: center, middle
 
 # Central Abstractions
 
-- The central abstraction is the Observable
+- The central abstraction is the 'Observable', or 'Event Stream'
     - Represents a stream of events that can be _observed_ and _reacted_ to
     - Events can be of different types and have different sources
     - Reactive Programming abstracts across these different sources
@@ -81,40 +81,46 @@ class: center, middle
 
 ---
 
-# History
-
-- Much early work done by Erik Meijer whilst at MSFT
-
-- 2012 ACM Paper - 'Your Mouse is a Database'
-
-- 2009 - Reactive Extensions for .NET released
-    - Subsequently extended to other languages
-
-- TODO: Add a bit here about Bacon and RxJS
-
----
-
 # What We'll Look at Today
 
-- Introduce bacon.js and contrast it with trad approaches for simple examples
+- Introduce Bacon.js and contrast it with traditional approaches for some simple examples
 
-- Show some of the common operators on streams
+--
 
-- Talk a bit about RxJS
-    - Implementation of Reactive Extensions for JavaScript
+- Show some of the common basic operators on single streams
+    - Filtering events
+    - Transforming events
+    - Accumulating state
 
-- Discuss some of the differences between the two
+--
+
+- Move on to talk about our second framework
+    - RxJS - an implementation of _Reactive Extensions_ for JavaScript
+    - More complex and powerful than Bacon.js
+
+--
+
+- Go through some of the more advanced operators
+
+--
+
+- See how RxJS handles some of the more complex use cases
+
 
 ---
 
-# Creating and Subscribing to Event Streams
+# `EventStream`s in Bacon.js
 
 - Log the x- and y- coordinates of mouse-clicks to the console
 
-- Traditionally, add an event listener (<a href="examples/example1-mouseClick-trad.html" target="_blank">Example</a>):
+--
+
+- Traditionally, we'd add an event listener (<a href="examples/example1-mouseClick-trad.html" target="_blank">Example</a>):
 ```javascript
     document.addEventListener("click", console.log);
 ```
+
+--
 
 - With Bacon.js (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>) we use a `EventStream`:
 ```javascript
@@ -125,9 +131,13 @@ class: center, middle
     eventStream.onValue(console.log);
 ```
 
+--
+
 - Notice how the two concerns (raising and handling events) are separated
 
-- Also, notice that the event stream is a first-class value
+--
+
+- Also, notice that the `EventStream` is a first-class value
 
 
 ---
@@ -136,7 +146,9 @@ class: center, middle
 
 - As before, but we only want to see the clicks on the right-hand side
 
-- Traditionally, we'd use an `if` statement in the callback:
+--
+
+- Traditionally, we'd use an `if` statement in the callback (<a href="examples/example2-rhsMouseClick-trad.html" target="_blank">Example</a>)
 ```javascript
     document.addEventListener("click", e => {
         if (e.clientX > window.innerWidth / 2) {
@@ -145,25 +157,43 @@ class: center, middle
     });
 ```
 
-- Note that we can no longer use the simple `console.log` reference because of the conditional
+--
+
+- We can't use the simple `console.log` function reference because of the `if`
+
+--
 
 - If we needed something else to react to _all_ clicks, we'd need a separate callback
 
-- With Bacon.js we can apply a `filter` to the original stream:
-```javascript
+---
+
+# Filtering Event Streams
+
+- With Bacon.js we can apply a `filter` to the original stream (<a href="examples/example2-rhsMouseClick-bacon.html" target="_blank">Example</a>)
+
+--
+
+    ```javascript
     // Create a Bacon.js EventStream
     const eventStream = Bacon.fromEvent(document, "click");
 
-    // Filter to create a new stream with only the 'right-hand' clicks
+    // Filter to create a new stream with only the
+    // 'right-hand' clicks
     const rhsEventStream = eventStream.filter(
         e => e.clientX > window.innerWidth / 2);
 
     // Subscribe to the EventStream
     // Note the use of just `log` here
-    rhsEventStream.log();
-```
+    rhsEventStream.onValue(console.log);
+    ```
 
-- Notice that we can still use `log` because we've separated the filtering from the side-effect
+--
+
+- Notice how we can use `console.log` as before:
+    - Because the filtering and side-effect concerns are separated
+    - Bacon.js also has a `log()` function
+
+--
 
 - Notice that filtering doesn't affect the original stream...
     - ...so it can be subscribed to independently
@@ -171,11 +201,13 @@ class: center, middle
 ---
 
 
-# Transforming values in a Stream
+# Transforming Events
 
-- Let's say we want to represent the coordinates in the console - e.g. `(123, 456)`
+- Let's say we want to show coordinates in the console - e.g. `(123, 456)`
 
-- Traditionally, it's in the callback again:
+--
+
+- Traditionally, it's in the callback again (<a href="examples/example3-mouseClickWithCoords-trad.html" target="_blank">Example</a>)
 ```javascript
     const clickToCoords =
         e => "(" + e.clientX + ", " + e.clientY + ")";
@@ -184,7 +216,11 @@ class: center, middle
         console.log(clickToCoords(e)));
 ```
 
-- With Bacon.js, this is just a `map`:
+---
+
+# Transforming Events
+
+- With Bacon.js, this is a `map` (<a href="examples/example3-mouseClickWithCoords-trad.html" target="_blank">Example</a>)
 ```javascript
     const clickToCoords =
         e => "(" + e.clientX + ", " + e.clientY + ")";
@@ -199,13 +235,17 @@ class: center, middle
     coordStream.log();
 ```
 
+- So, we've seen how to filter _or_ map events...
+
 ---
 
-# Combining Filtering and Mapping
+# Filtering _and_ Mapping
 
-- Only show the RHS clicks _and_ show them as coordinates.
+- Only show the RHS clicks _and_ show them as coordinates
 
-- Starting to get a bit gnarly with the traditional approach, because it's just not nicely composable:
+--
+
+- Starting to get a bit gnarly with the traditional approach (<a href="examples/example4-rhsMouseClickWithCoords-trad.html" target="_blank">Example</a>)
 ```javascript
     document.addEventListener("click", e => {
         if (e.clientX > window.innerWidth / 2) {
@@ -214,14 +254,27 @@ class: center, middle
     });
 ```
 
-- Here's the Bacon.js version:
+--
+
+- Ultimately, this is because the traditional approach just isn't nicely composable
+
+---
+
+# Filtering _and_ Mapping
+
+- Here's the Bacon.js version (<a href="examples/example4-rhsMouseClickWithCoords-bacon.html" target="_blank">Example</a>)
 ```javascript
     const eventStream = Bacon.fromEvent(document, "click");
+
     const rhsEventStream = eventStream.filter(
             e => e.clientX > window.innerWidth / 2);
+
     const rhsCoordStream = rhsEventStream.map(clickToCoords);
+
     rhsCoordStream.log();
 ```
+
+--
 
 - The various operators chain easily, so we _could_ just do:
 ```javascript
@@ -233,12 +286,14 @@ class: center, middle
 
 ---
 
-# Taking a certain number of events from a stream
+# Processing Limited Events
 
 - Log only the first 5 clicks...
     - ... and make sure you dispose of the listener at the end
 
-- Traditionally, we need to maintain some state:
+--
+
+- Traditionally, we need to maintain some state (<a href="examples/example5-firstFiveMouseClicks-trad.html" target="_blank">Example</a>)
 ```javascript
     let clicks = 0;
     document.addEventListener("click", function registerClicks(e) {
@@ -251,50 +306,85 @@ class: center, middle
     });
 ```
 
+--
+
 - That `let` should be a _massive_ alarm bell...
+
+--
 
 - Also, we need to explicitly deregister the event listener to avoid leaks
 
-- Bacon.js has the `take` operator, to take values then end the stream:
+--
+
+- I've not tried including filtering and mapping, but you can imagine what it would look like...
+
+---
+
+# Processing Limited Events
+
+- Bacon.js has the `take` operator, to take values then end the stream (<a href="examples/example5-firstFiveMouseClicks-bacon.html" target="_blank">Example</a>)
 ```javascript
     const eventStream = Bacon.fromEvent(document, "click");
     eventStream.take(5).log();
 ```
 
-- Again, this composes nicely with the other operators, unlike the traditional approach
+--
+
+- This automatically disposes of the memory associated with the stream
+
+--
+
+- Like `filter` and `map`, `take` composes nicely with the other operators
+```javascript
+    // This is what I didn't dare write in trad-style...
+    Bacon.fromEvent(document, "click")
+         .filter(e => e.clientX > window.innerWidth / 2)
+         .map(clickToCoords)
+         .take(5)
+         .log();
+```
 
 ---
 
-# Where are we?
+# Review
 
-- Streams:
+- Event Streams:
     - Are potentially infinite
-    - Can be transformed using operators like `filter`, `map` etc
+    - Can be transformed using operators like `filter` and `map`
     - Are immutable
-    - Have operations to avoid the need to manage state
+    - Have operations (like `take`) to avoid the need to manage state
+
+--
 
 - Sound familiar?
+    - This is often why this is sometimes referred to as 'Functional Reactive Programming' (FRP)
+    - Although, just 'Reactive Programming' is
 
-- This is often why this stuff is referred to as 'Functional Reactive Programming' (FRP)
-
-- ... although that's technically different, and *definitely* a story for another time
+--
 
 - So, we've seen examples of `filter` and `map`, but what about `reduce`?
 
 ---
 
-# Bacon.js Properties
-
-- Earlier, we saw examples of Bacon.js's `EventStream` - a type of observable
-
-- The other flavour of observable in Bacon.js is the `Property`:
-    - Basically, an `EventStream` with the concept of 'current value'
+# Accumulating State
 
 - Let's say we want to adapt the earlier examples to _count_ the number of clicks as well
-    - Still have the `EventStream` for the clicks
+    - So, we need to maintain state
+
+--
+
+- Bacon.js has the concept of a `Property` as well as an `EventStream`
+    - `Property` = `EventStream` + current value
+
+--
+
+- For our example
+    - We still have the `EventStream` to log the clicks
     - But we also want a 'click count' `Property`, whose value increments on each click
 
-- We can do this using `scan`, the Bacon.js version of `reduce`:
+--
+
+- We can do this using `scan`, the Bacon.js version of `reduce`
 ```javascript
     const clickStream = Bacon.fromEvent(document, "click");
     const clickCount = clickStream.scan(0, (acc, e) => acc + 1);
@@ -303,20 +393,20 @@ class: center, middle
     clickCount.log();
 ```
 
-- Notice how we are subscribing independently to the two observables
+--
 
-- Also notice that there's no state being maintained in our code
+- Notice how we are subscribing independently to the two observables
 
 ---
 
-# Creating Streams from...
+# Creating Streams
 
-- Remember the bit about Streams being a unifying abstraction across various things?
+- `EventStream`s are an abstraction across various types of streams?
+    - So, what sort of things can you create an `EventStream` from?
 
-- What sort of things can you create an EventStream from?
+--
 
-- Simple cases:
-
+- First, some simple cases:
 ```javascript
     // ... from an array
     const arrayStream = Bacon.fromArray([1, 2, 3, 4, 5]);
@@ -325,11 +415,15 @@ class: center, middle
     const intervalStream = Bacon.interval(1000)
 
     // ... sequential values with intervals
-    const sequentialStream = Bacon.sequentially(1000, ['a', 'b', 'c', 'd', 'e']);
+    const sequentialStream = Bacon.sequentially(1000,
+                                ['a', 'b', 'c', 'd', 'e']);
 ```
 
-- Also integration with other JS event-related abstractions
+---
 
+# Creating Streams
+
+- Next, we can integrate with other event-related abstractions
 ```javascript
     // ... from DOM Events (JQuery)
     const clickEventStream = $('#buttonId').asEventStream('click');
@@ -342,28 +436,48 @@ class: center, middle
     const fileStream = Bacon.fromEvent(file, 'data');
 
     // ... from Promises (e.g. from JQuery AJAX)...
-    const agentPromise = $.ajax({ url: "http://httpbin.org/user-agent" });
+    const agentPromise = $.ajax({
+                url: "http://httpbin.org/user-agent" });
     const promiseStream = Bacon.fromPromise(agentPromise);
 
     // ... or in NodeJS, using axios
-    const responsePromise = axios.get("http://httpbin.org/headers");
+    const responsePromise = axios.get(
+                        "http://httpbin.org/headers");
     const responseStream = Bacon.fromPromise(responsePromise)
         .map(r => r.data);
 ```
 
-- It's also possible to create an `EventStream` from an arbitrary source, using the `Bacon.fromBinder` function
+---
 
-- RxJS has all of these, and more, e.g.:
+# Creating Streams
+
+- It's also possible to create an `EventStream` from an arbitrary source, using `fromBinder()`
+```javascript
+    const stream = Bacon.fromBinder(function(sink) {
+        sink("first value");
+        sink("second value");
+        sink("third value");
+        sink(new Bacon.End())
+        return function() {
+            // unsubscribe function if needed
+        })
+
+    stream.log();
+```
+
+--
+
+- RxJS has all of these, and more, e.g.
     - `interval` - emits an incrementing integer
     - Better 'no-op' cases for testing and composition - e.g. `never`
-    - `from` is more flexible and can create Observables from a more general iterable
-    - as opposed to specific `fromXXX` methods in Bacon.js
-    - e.g. ES6 Set and Map objects
-    - Or [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
+    - `from` is more flexible and can create Observables from any iterable
+    - Or from [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
+
+--
 
 ---
 
-# Over to RxJS
+# Switching to RxJS
 
 - RxJS is the JavaScript implementation of [Reactive Extensions](http://reactivex.io)
 
@@ -379,7 +493,7 @@ class: center, middle
     - ... [and others](http://reactivex.io/languages.html)
 
 - We're just going to look at RxJS here
-    - Full disclosure - I've looked at RxJS 4, but RxJS 5 is available
+    - Full disclosure - I've looked at RxJS 4 here, but RxJS 5 is available
 
 - Modular distribution (unlike Bacon.js)
     - `rx.all.js` for the whole lot
