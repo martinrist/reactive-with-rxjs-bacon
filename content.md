@@ -568,6 +568,167 @@ class: center, middle
 
 ---
 
+# Combining Observables
+
+- So far, we've looked at operations just on a single Observable
+    - However, we can combine / compose Observables in various ways
+
+--
+
+- This is where marble diagrams really come into their own!
+
+--
+
+- Simplest example is concatenating or merging two `Observables`
+
+--
+
+- `concat()` - appends events from second `Observable` onto end of first:
+
+.center[![Marble Diagram - concat](images/concatMarbleDiagram.png)]
+
+---
+
+# Combining Observables
+
+- `merge()` - interleaves items from the various sources:
+
+.center[![Marble Diagram - merge](images/mergeMarbleDiagram.png)]
+
+.center[(Bacon.js has the same methods for `EventStream`s)]
+
+---
+
+# Combining Observables
+
+- Use case: triggering an action based on pressing enter or clicking a button
+```javascript
+    const searchClick = Rx.Observable.fromEvent(button, "click");
+    const enterKeyUp = Rx.Observable.fromEvent(input, "keyup")
+                                    .filter(e => e.keyCode === 13);
+
+    const searchClickOrEnterKeyUp = searchClick.merge(enterKeyUp);
+    searchClickOrEnterKeyUp.subscribe(doStuff);
+```
+
+--
+
+- We can also combine events from two `Observable`s using a function
+
+--
+
+- This behaviour differs slightly between Bacon.js and RxJS
+
+---
+
+# Combining Observables
+
+- Add up a stream of units and a stream of 10's
+
+--
+
+- In Bacon.js, we use `combineWith`
+```javascript
+    // emits and increasing integer every second
+    const unitsStream = Bacon.repeat(i => Bacon.later(1000, i));
+    const tensStream = unitsStream.map(x => x * 10);
+
+    const sumStream = Bacon.combineWith(
+            unitsStream, tensStream, (u, t) => u + t);
+    sumStream.log();
+
+    > 0
+    > 11
+    > 22
+    > 33
+    > 44
+```
+
+---
+
+# Combining Observables
+
+- The same version in RxJS, using `combineLatest`
+```javascript
+    const unitsStream = Rx.Observable.interval(1000);
+    const tensStream = unitsStream.map(x => x * 10);
+
+    const sumStream = unitsStream.combineLatest(
+                tensStream, (u, t) => u + t);
+    sumStream.subscribe(console.log);
+
+    > 0
+    > 1    <- glitch
+    > 11
+    > 12   <- glitch
+    > 22
+    > 23   <- glitch
+    > 33
+    > 34   <- glitch
+    > 44
+```
+
+--
+
+- Bacon.js is giving us 'atomic' updates, whereas we're getting glitches in RxJS
+
+---
+
+# Combining Observables
+
+- With RxJS, we can get around this, by using `zip`
+```javascript
+    const unitsStream = Rx.Observable.interval(1000);
+    const tensStream = unitsStream.map(x => x * 10);
+
+    const sumStream = unitsStream.zip(
+                tensStream, (u, t) => u + t);
+    sumStream.subscribe(console.log);
+
+    > 0
+    > 11
+    > 22
+    > 33
+    > 44
+```
+
+--
+
+- Bacon.js has stronger, 'glitch-free' event delivery semantics:
+    - But the price is some performance overhead
+    - Generally, RxJS is considered more performant than Bacon.js
+    - [Kefir](https://github.com/rpominov/kefir) is inspired by an attempt to address this
+
+---
+
+# Combining Observables
+
+- A final example showing composition of Observables
+    - Iterate through an array emitting values at an interval
+    - Neither Bacon.js nor RxJS has a built in function to do this
+    - Instead we can combine streams
+
+--
+
+```javascript
+const values = Rx.Observable.from(
+            ["red", "green", "blue", "purple", "pink"]);
+const ticks = Rx.Observable.interval(1000);
+
+const valuesAtInterval = values.zip(ticks, (c, i) => c);
+
+valuesAtInterval.subscribe(console.log);
+
+... all separated by 1 second
+> red
+> green
+> blue
+> purple
+> pink
+```
+
+---
+
 # Hot vs Cold Observables
 
 - In Bacon.js, an observable only emits a value when a subscriber subscribes to it:
@@ -654,112 +815,6 @@ class: center, middle
     - We get an Observable of the response
     - We have multiple subscribers to the response
     - TODO: Simple example
-
----
-
-# Combining Observables
-
-- So far, we've looked at operations just on a single Observable:
-    - However, we can combine / compose Observables in various ways
-
-- Simplest example is concatenating or merging `Observables` to create a new one:
-    - `concat()` - appends events from second Observable onto end of first
-    - `merge()` - interleaves items from the various sources
-    - Same method for `EventStream`s in Bacon.js
-
-- The difference is clear from the marble diagrams:
-    - TODO: Add concat diagram from http://reactivex.io/documentation/operators/concat.html
-    - TODO: Add merge diagram from http://reactivex.io/documentation/operators/merge.html
-
-- Use case: triggering an action based on pressing enter or clicking a button:
-```javascript
-    const searchClick = Rx.Observable.fromEvent(button, "click");
-    const enterKeyUp = Rx.Observable.fromEvent(input, "keyup")
-                                    .filter(e => e.keyCode === 13);
-
-    const searchClickOrEnterKeyUp = searchClick.merge(enterKeyUp);
-    searchClickOrEnterKeyUp.subscribe(doStuff);
-```
-
-- We can combine events from two `Observable`s using a function:
-    - This behaviour differs between Bacon.js and RxJS
-
-- To see how, consider this example:
-```javascript
-    // emits and increasing integer every second
-    const unitsStream = Bacon.repeat(i => Bacon.later(1000, i));
-    const tensStream = unitsStream.map(x => x * 10);
-
-    const sumStream = Bacon.combineWith(unitsStream, tensStream, (o, t) => o + t);
-    sumStream.subscribe(console.log);
-
-    > 0
-    > 11
-    > 22
-    > 33
-    > 44
-```
-
-- The same version in RxJS, using `combineLatest`:
-```javascript
-    const unitsStream = Rx.Observable.interval(1000);
-    const tensStream = unitsStream.map(x => x * 10);
-
-    const sumStream = unitsStream.zip(tensStream, (o, t) => o + t);
-    sumStream.subscribe(console.log);
-
-    > 0
-    > 1    <- glitch
-    > 11
-    > 12   <- glitch
-    > 22
-    > 23   <- glitch
-    > 33
-    > 34   <- glitch
-    > 44
-```
-
-- Bacon.js is giving us 'atomic' updates, whereas we're getting glitches in RxJS
-
-- With RxJS, we can get around this, by using `zip`:
-```javascript
-    const unitsStream = Rx.Observable.interval(1000);
-    const tensStream = unitsStream.map(x => x * 10);
-
-    const sumStream = unitsStream.zip(tensStream, (o, t) => o + t);
-    sumStream.subscribe(console.log);
-
-    > 0
-    > 11
-    > 22
-    > 33
-    > 44
-```
-
-- Bacon.js has stronger, 'glitch-free' event delivery semantics:
-    - But the price is some performance overhead
-    - Generally, RxJS is considered more performant than bacon.js
-    - [Kefir](https://github.com/rpominov/kefir) is inspired by an attempt to address this.
-
-- A final example showing composition of Observables:
-    - Iterate through an array emitting values at an interval
-    - Neither Bacon.js nor RxJS has a built in function to do this
-    - Instead we can combine streams:
-
-```javascript
-    const values = Rx.Observable.from(["red", "green", "blue", "purple", "pink"]);
-    const ticks = Rx.Observable.interval(1000);
-
-    const valuesAtInterval = values.zip(ticks, (c, i) => c);
-
-    valuesAtInterval.subscribe(console.log);
-
-    > red
-    > green
-    > blue
-    > purple
-    > pink
-```
 
 ---
 
