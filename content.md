@@ -731,20 +731,27 @@ valuesAtInterval.subscribe(console.log);
 
 # Hot vs Cold Observables
 
-- In Bacon.js, an observable only emits a value when a subscriber subscribes to it:
+- In Bacon.js, observable only emits a value when a subscriber subscribes to it
 ```javascript
     const stream = Bacon.interval(1000);
     console.log("Stream created");
     setTimeout(() => stream.log(), 5000);
 
     > Stream created
+    ... no events are emitted yet
+    ... as there are no subscribers
     ... 5 seconds later ...
+    > {}
     > {}
     > {}
     > {}
 ```
 
-- Also, all subscribers to the same observable always get the same event:
+---
+
+# Hot vs Cold Observables
+
+- Also, _all_ subscribers to the same observable _always_ get the same event
 ```javascript
     // A clunkier version of Rx.Observable.interval(1000)
     const stream = Bacon.repeat(i => Bacon.later(1000, i));
@@ -764,12 +771,14 @@ valuesAtInterval.subscribe(console.log);
     > Subscriber 2: 4
     > Subscriber 1: 5
     > Subscriber 2: 5
-    > Subscriber 1: 6
-    > Subscriber 2: 6
     ...
 ```
 
-- In RxJS it's a bit more complicated:
+---
+
+# Hot vs Cold Observables
+
+- In RxJS it's a bit more complicated
 ```javascript
     const stream = Rx.Observable.interval(1000);
     console.log("Stream created");
@@ -792,41 +801,46 @@ valuesAtInterval.subscribe(console.log);
     > Subscriber 2: 2
 ```
 
-- `Rx.Observable.interval` is what's called a _cold observable_ in RxJS:
-    - Emits values only when Observers subscribe to it (like bacon.js)
-    - Every new subscriber receives events from the start (*not* like bacon.js)
+---
+
+# Hot vs Cold Observables
+
+- `Rx.Observable.interval` is what's called a _cold observable_ in RxJS
+    - Emits values only when Observers subscribe to it (like Bacon.js)
+    - Every new subscriber receives events from the start (*un*like Bacon.js)
+
+--
 
 - In contrast, a _hot observable_:
-    - May start emitting values before it has any observers
-    - Observers joining later may observe values midway through the observable
-    - All Observers to the same Hot Observable receive exactly the same value
+    - May start emitting values before it has any `Observer`s
+    - `Observer`s that join later get the latest values...
+    - ... and they all get the same value
     - Just like traditional JavaScript events
 
-- It's possible to convert a _cold observable_ to a _hot observable_
+--
 
 - This is another one of the key differences between Bacon.js and RxJS:
-    - Bacon.js has no _cold observables_, so EventStreams and Properties are consistent among subscribers
-    - RxJS has more options, therefore more flexible
-    - But we need to be careful to avoid unexpected behaviour
-    - Need to pay attention to what kind of Observable we're using
-
-- Can cause duplicate network requests:
-    - We want to make a call every 5 seconds (`Rx.Observable.interval(5000)`)
-    - We get an Observable of the response
-    - We have multiple subscribers to the response
-    - TODO: Simple example
+    - Bacon.js has no _cold observables_
+    - So `EventStream`s are always consistent among subscribers
+    - RxJS has more options, therefore more flexible ...
+    - ... but we need to be careful to avoid unexpected behaviour
+    - Need to pay attention to what kind of `Observable` we're using
 
 ---
 
 # Subjects (RxJS only)
 
-- So far, we've talked about Observers and Observables in RxJS
-
-- RxJS also has a `Subject`, which can act as both an `Observer` and `Observable`:
-    - Can subscribe to an `Observable` (i.e. act as an `Observer`)
-    - Can produce values and have its own subscribers (i.e. act an `Observable`)
+- RxJS also has a `Subject` abstraction
+    - A `Subject` can act as both an `Observer` and `Observable`
+    - Can subscribe to an `Observable` (an `Observer`)
+    - Can produce values (an `Observable`)
+    - Can have its own subscribers (an `Observable`)
     - Acts like a 'bridge' or 'proxy' between a data source and subscribers
+    - Can act as a 'decorator'
 
+--
+
+- Simple example - a plain old `Subject`:
 ```javascript
     const source = Rx.Observable.interval(1000);
     const subject = new Rx.Subject();
@@ -841,10 +855,16 @@ valuesAtInterval.subscribe(console.log);
     ...
 ```
 
-- By introducing the proxy, we can add more complex behaviour with multiple subscribers.
+---
 
-- Recall what happens with two subscribers to `source`:
+# Subjects (RxJS only)
 
+- By introducing the proxy, we can add more complex behaviour
+    - Particularly in cases with multiple subscribers
+
+--
+
+- Recall what happens with two subscribers, because `interval` is a _cold observable_, that restarts for each subscriber
 ```javascript
     const source = Rx.Observable.interval(1000);
     source.subscribe(e => console.log("Subscriber 1: " + e));
@@ -863,10 +883,11 @@ valuesAtInterval.subscribe(console.log);
     > Subscriber 1: 5
 ```
 
-- This is because `interval` is a _cold obsverable_, so it restarts for each subscriber.
+---
 
-- If we introduce a basic `Subject`, it turns `interval` into a _hot observable_:
+# Subjects (RxJS only)
 
+- If we introduce a basic `Subject`, it turns `interval` into a _hot observable_
 ```javascript
     const source = Rx.Observable.interval(1000);
     const subject = new Rx.Subject();
@@ -888,83 +909,121 @@ valuesAtInterval.subscribe(console.log);
     ...
 ```
 
-- `AsyncSubject` emits the last value of a sequence when it terminates:
+---
+
+# Subjects (RxJS only)
+
+- `AsyncSubject` emits the last value of a sequence when it terminates
     - It then caches the value forever
     - Subsequent subscribers receive the value immediately
-    - Useful for async network requests that we want to cache
 
-![Marble Diagram - AsyncSubject](images/asyncSubjectMarbleDiagram.png)
+--
+
+.center[![Marble Diagram - AsyncSubject](images/asyncSubjectMarbleDiagram.png)]
+
+---
+
+# Subjects (RxJS only)
 
 ```javascript
-    // Emits "red", "green", "blue" at 1s intervals
-    const source = Rx.Observable.from(["red", "green", "blue"])
-        .zip(Rx.Observable.interval(1000), (c, i) => c);
-    const subject = new Rx.AsyncSubject();
-    source.subscribe(subject);
+// Emits "red", "green", "blue" at 1s intervals
+const source = Rx.Observable.from(["red", "green", "blue"])
+    .zip(Rx.Observable.interval(1000), (c, i) => c);
 
-    subject.subscribe(e => console.log("Subscriber 1: " + e));
-    setTimeout(() => {
-        subject.subscribe(e => console.log("Subscriber 2: " + e))
-    }, 5000);
+const subject = new Rx.AsyncSubject();
+source.subscribe(subject);
 
-    > ... at T+3, first subscriber emits last value
-    > Subscriber 1: blue
-    > ... at T+5, second subscriber gets last value
-    Subscriber 2: blue
+subject.subscribe(e => console.log("Subscriber 1: " + e));
+setTimeout(() => {
+    subject.subscribe(e => console.log("Subscriber 2: " + e))
+}, 5000);
+
+> ... at T+3, first subscriber emits last value
+> Subscriber 1: blue
+
+> ... at T+5, second subscriber gets last value
+Subscriber 2: blue
 ```
 
-- Next up `BehaviorSubject`:
-    - When `Observer` subscribes, receives the last emitted value
+- Useful for async network requests that we want to cache
+
+
+---
+
+# Subjects (RxJS only)
+
+- `BehaviorSubject`
+    - When `Observer` subscribes, receives the latest emitted value
     - Then receives all subsequent values emitted
     - Requires an initial value in the constructor
 
-![Marble Diagram - BehaviorSubject](images/behaviorSubjectMarbleDiagram.png)
+--
+
+.center[![Marble Diagram - BehaviorSubject](images/behaviorSubjectMarbleDiagram.png)]
+
+
+---
+
+# Subjects (RxJS only)
 
 ```javascript
-    const subject = new Rx.BehaviorSubject("purple");
-    source.subscribe(subject);
+const subject = new Rx.BehaviorSubject("purple");
+source.subscribe(subject);
 
-    subject.subscribe(e => console.log("Subscriber 1: " + e));
-    setTimeout(() => {
-        subject.subscribe(e => console.log("Subscriber 2: " + e))
-    }, 2500);
+subject.subscribe(e => console.log("Subscriber 1: " + e));
+setTimeout(() => {
+    subject.subscribe(e => console.log("Subscriber 2: " + e))
+}, 2500);
 
-    > ... initial value
-    > Subscriber 1: purple
-    > Subscriber 1: red
-    > Subscriber 1: green
-    > ... at T+2.5s, subscriber 2 joins the party
-    > Subscriber 2: green
-    > Subscriber 1: blue
-    > Subscriber 2: blue
+> ... initial value
+> Subscriber 1: purple
+> Subscriber 1: red
+> Subscriber 1: green
+> ... at T+2.5s, subscriber 2 joins the party
+> Subscriber 2: green
+> Subscriber 1: blue
+> Subscriber 2: blue
 ```
 
-- Finally, `ReplaySubject`:
+---
+
+# Subjects (RxJS only)
+
+- `ReplaySubject`
      - When `Observer` subscribes, receives all values emitted so far
      - Then receives all subsequent values emitted
      - Can customise with count- or time-based windows
 
-![Marble Diagram - ReplaySubject](images/replaySubjectMarbleDiagram.png)
+--
+
+.center[![Marble Diagram - ReplaySubject](images/replaySubjectMarbleDiagram.png)]
+
+---
+
+# Subjects (RxJS only)
 
 ```javascript
-    const subject = new Rx.ReplaySubject();
-    source.subscribe(subject);
+const subject = new Rx.ReplaySubject();
+source.subscribe(subject);
 
-    subject.subscribe(e => console.log("Subscriber 1: " + e));
-    setTimeout(() => {
-        subject.subscribe(e => console.log("Subscriber 2: " + e))
-    }, 2500);
+subject.subscribe(e => console.log("Subscriber 1: " + e));
+setTimeout(() => {
+    subject.subscribe(e => console.log("Subscriber 2: " + e))
+}, 2500);
 
-    > Subscriber 1: red
-    > Subscriber 1: green
-    > ... when subscriber 2 joins, it immediately gets 'red' and 'green'
-    > Subscriber 2: red
-    > Subscriber 2: green
-    > Subscriber 1: blue
-    > Subscriber 2: blue
+> Subscriber 1: red
+> Subscriber 1: green
+> ... when subscriber 2 joins, it immediately gets
+> ... 'red' and 'green'
+> Subscriber 2: red
+> Subscriber 2: green
+> Subscriber 1: blue
+> Subscriber 2: blue
 ```
 
-- So, in summary, we have many more options about how we can customise Observable behaviours.
+--
+
+- So, in RxJS, we have many more options about how we can customise Observable behaviours
 
 ---
 
