@@ -17,7 +17,6 @@ node $EXAMPLE_FILE
 # TODO Items
 
 - Comparison table
-- Split up slides
 - Restructure examples to remove numbering
 - Autocomplete example - review & tidy
 - Add note / text about RxJS 4 vs 5 and some API / method name changes

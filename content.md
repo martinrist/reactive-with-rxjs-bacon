@@ -729,6 +729,185 @@ valuesAtInterval.subscribe(console.log);
 
 ---
 
+# Error Handling
+
+- Previously, we've just seen simple subscriptions that just handle successes
+    - In the case of errors, RxJS and Bacon.js differ in their default behaviours
+
+--
+
+-  In RxJS, we can provide multiple handlers when we `subscribe`
+```javascript
+    const observable = Rx.Observable
+       .from([1, 2, 3])
+       .concat(Rx.Observable.throw(new Error("An error occurred")))
+       .concat(Rx.Observable.from([4, 5]));
+
+    observable.subscribe(
+        i   => console.log("Received:", i),
+        err => console.log("Error thrown:", err.message),
+        ()  => console.log("Completed"));
+
+    > Received: 1
+    > Received: 2
+    > Received: 3
+    > Error thrown: An error occurred
+```
+
+--
+
+- Note how the error terminates the stream - the completion handler doesn't fire
+
+---
+
+# Error Handling
+
+- The same in Bacon.js
+```javascript
+    const eventStream = Bacon.fromArray([1, 2, 3])
+        .concat(Bacon.once(new Bacon.Error("An error occurred")))
+        .concat(Bacon.fromArray([4, 5]));
+
+    eventStream.log();
+
+    > 1
+    > 2
+    > 3
+    > <error> An error occurred
+    > 4
+    > 5
+    > <end>
+```
+
+--
+
+- Note that the error *doesn't* terminate the stream
+
+---
+
+# Error Handling
+
+- We can (almost) get the original RxJS-style behaviour back using `endOnError()`
+```javascript
+    const eventStream = Bacon.fromArray([1, 2, 3])
+        .concat(Bacon.once(new Bacon.Error("An error occurred")))
+        .concat(Bacon.fromArray([4, 5]));
+
+    eventStream.endOnError().log();
+
+    > 1
+    > 2
+    > 3
+    > <error> An error occurred
+    > <end>
+```
+
+--
+
+- Notice that we *still* get the completion event in this case
+
+---
+
+# Error Handling
+
+- Various options for what to do in the case of errors, including:
+    - `retry(attempts)` - re-executes the source `Observable`
+    - `catch(fallbackObservable)` - falls back to a replacement Observable
+
+---
+
+
+# Backpressure
+
+- What happens if our `Observable` emits events faster than our `Observer` can process them?
+    - Handling mouse move events
+    - Autocomplete - we don't want to make a request on every `keyup` event
+    - Rendering tweets arriving on a hashtag to make them human-readable
+
+--
+
+- Two main strategies for handling this 'backpressure'
+    - _Lossy_ - discarding events
+    - _Lossless_ - queue / buffer events or batch processing
+
+--
+
+- Bacon.js and RxJS have similar methods for dealing with these cases
+    - Some of the following operators have [changed in RxJS 5](https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md#operators-renamed-or-removed)
+
+---
+
+# Backpressure
+
+- `throttle(interval)`
+    - Emits the first item from the source
+    - Then ignores subsequent items until `interval` ms have passed
+    - Then starts again
+    - e.g. rate-limiting execution of handlers on events like resize / scroll
+
+.center[![Marble Diagram - Throttle](images/throttleTimeMarbleDiagram.png)]
+
+---
+
+# Backpressure
+
+- `sample(interval)`
+    - Every `interval` ms it samples the source
+    - And emits the latest item emitted by the source
+    - e.g. sampling values from a stock ticker every 5 seconds
+
+.center[![Marble Diagram - Sample](images/sampleTimeMarbleDiagram.png)]
+
+---
+
+# Backpressure
+
+- `debounce(interval)`:
+    - Emits an item from the source `Observable` if no intervening item has been emitted after `interval` ms
+    - Basically, if the source has been 'quiet' for `interval` ms
+    - e.g. waiting for 0.5s after a user has finished typing
+
+.center[![Marble Diagram - Debounce](images/debounceTimeMarbleDiagram.png)]
+
+- All of these are easier to see with an <a href="examples/example14-backpressure-lossy.html" target="_blank">example</a>
+
+---
+
+# Backpressure
+
+- `buffer*` methods buffer data in memory then emit an array
+    - `bufferWithCount(count)` emits when the buffer reaches `count` items
+    - `bufferWithTime(time)` emits every `time` ms (possibly empty)
+    - `bufferWithTimeOrCount(time, count)` combines them
+
+- Again, it's easier to see with an <a href="examples/example14-backpressure-lossless.html" target="_blank">example</a>
+
+---
+
+# AutoComplete with RxJS
+
+- One of the canonical examples of reactive programming is 'AutoComplete':
+    - User enters search term
+    - If longer than two characters, search Wikipedia and present results
+    - 'Wait' for user to stop typing for a bit before querying
+    - If no results, notify the user
+    - If an error occurs, notify the user
+
+--
+
+- Pulls together a number of techniques we've seen here:
+    - Creating `Observable`s from DOM events
+    - Filtering (>2 characters)
+    - Backpressure - waiting for `keyup` events to settle down before querying
+    - Handling responses
+    - Error handling - retrying and notification
+
+--
+
+- See <a href="examples/autocomplete.html" target="_blank">example</a>
+
+---
+
 # Hot vs Cold Observables
 
 - In Bacon.js, observable only emits a value when a subscriber subscribes to it
@@ -1102,7 +1281,7 @@ setTimeout(() => {
 
 ---
 
-# Using Schedulers for Testing
+# Schedulers (RxJS only)
 
 - Testing asynchronous behaviour is hard
     - Unpredictable race conditions
@@ -1124,7 +1303,7 @@ setTimeout(() => {
 
 ---
 
-# Using Schedulers for Testing
+# Schedulers (RxJS only)
 
 ```javascript
 const scheduler = new Rx.TestScheduler();
@@ -1153,163 +1332,10 @@ function advanceTime(ms) {
 > 2
 ```
 
-
 ---
 
-# Backpressure
-
-- What happens if our `Observable` emits events faster than our `Observer` can process them?
-    - Handling mouse move events
-    - Autocomplete - we don't want to initiate an Ajax request on every `keyup` event
-    - Rendering tweets arriving on a hashtag to make them human-readable
-
-- Two main strategies for handling this 'backpressure':
-    - _Lossy_ - discarding events
-    - _Lossless_ - queue / buffer events or batch processing
-
-- Bacon.js and RxJS have similar methods for dealing with these cases
-
-- _Lossy_ strategies use constant memory, whereas _lossless_ ones depend on the buffer size
-
-- Note that some of the following operators have [changed in RxJS 5](https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md#operators-renamed-or-removed)
----
-
-# Lossy Strategies
-
-- `throttle(interval)`
-    - Emits the first item from the source
-    - Then ignores subsequent items until `interval` ms have passed
-    - Then starts again
-    - e.g. rate-limiting execution of handlers on events like resize / scroll
-
-.center[![Marble Diagram - Throttle](images/throttleTimeMarbleDiagram.png)]
-
----
-
-# Lossy Strategies
-
-- `sample(interval)`
-    - Every `interval` ms it samples the source
-    - And emits the latest item emitted by the source
-    - e.g. sampling values from a stock ticker every 5 seconds
-
-.center[![Marble Diagram - Sample](images/sampleTimeMarbleDiagram.png)]
-
----
-
-# Lossy Strategies
-
-- `debounce(interval)`:
-    - Emits an item from the source `Observable` if no intervening item has been emitted after `interval` ms
-    - Basically, if the source has been 'quiet' for `interval` ms
-    - e.g. waiting for 0.5s after a user has finished typing
-
-.center[![Marble Diagram - Debounce](images/debounceTimeMarbleDiagram.png)]
-
-- All of these are easier to see with an <a href="examples/example14-backpressure-lossy.html" target="_blank">example</a>
-
----
-
-# Lossless Strategies
-
-- `buffer*` methods buffer data in memory then emit an array
-    - `bufferWithCount(count)` emits when the buffer reaches `count` items
-    - `bufferWithTime(time)` emits every `time` ms (possibly empty)
-    - `bufferWithTimeOrCount(time, count)` combines them
-
-- Again, it's easier to see with an <a href="examples/example14-backpressure-lossless.html" target="_blank">example</a>
-
----
-
-
-
-# Error Handling
-
-- Previously, we've just seen simple subscriptions that just handle successes:
-    - In the case of errors, RxJS and Bacon.js differ in their default behaviours
-
--  In RxJS, we can provide multiple handlers when we `subscribe`.  The error terminates
-```javascript
-    const observable = Rx.Observable
-        .from([1, 2, 3])
-        .concat(Rx.Observable.throw(new Error("An error occurred")))
-        .concat(Rx.Observable.from([4, 5]));
-
-    observable.subscribe(
-        i   => console.log("Received:", i),
-        err => console.log("Error thrown:", err.message),
-        ()  => console.log("Completed"));
-
-    > Received: 1
-    > Received: 2
-    > Received: 3
-    > Error thrown: An error occurred
-```
-
-- Note how the error terminates the stream - the completion handler doesn't fire
-
-- Now, the same in Bacon.js:
-```javascript
-    const eventStream = Bacon.fromArray([1, 2, 3])
-        .concat(Bacon.once(new Bacon.Error("An error occurred")))
-        .concat(Bacon.fromArray([4, 5]));
-
-    eventStream.log();
-
-    > 1
-    > 2
-    > 3
-    > <error> An error occurred
-    > 4
-    > 5
-    > <end>
-```
-
-- Note that the error doesn't terminate the stream, and we go on to get the completion
-
-- We can (almost) get the original RxJS-style behaviour back using `endOnError()`, but we still get the completion event:
-```javascript
-    const eventStream = Bacon.fromArray([1, 2, 3])
-        .concat(Bacon.once(new Bacon.Error("An error occurred")))
-        .concat(Bacon.fromArray([4, 5]));
-
-    eventStream.endOnError().log();
-
-    > 1
-    > 2
-    > 3
-    > <error> An error occurred
-    > <end>
-```
-
-- Various options for what to do in the case of errors, including:
-    - `retry(attempts)` - re-executes the source `Observable`
-    - `catch(fallbackObservable)` - falls back to a replacement Observable
-
----
-
-# AutoComplete with RxJS
-
-- One of the canonical examples of reactive programming is 'AutoComplete':
-    - User enters search term
-    - If longer than two characters, search Wikipedia and present results
-    - 'Wait' for user to stop typing for a bit before querying
-    - If no results, notify the user
-    - If an error occurs, notify the user
-
-- Pulls together a number of techniques we've seen here:
-    - Creating `Observable`s from DOM events
-    - Filtering (>2 characters)
-    - Backpressure - waiting for `keyup` events to settle down before querying
-    - Handling responses
-    - Error handling - retrying and notification
-
-- See <a href="examples/autocomplete.html" target="_blank">example</a>
-
----
 
 # Comparison Table
-
 
 |                             | Bacon.js | RxJS   |
 | --------------------------- | -------- | ------ |
