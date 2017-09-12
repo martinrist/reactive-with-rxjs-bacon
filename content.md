@@ -25,7 +25,7 @@ class: center, middle
 
 --
 
-- TODO: Add quote from TechExeter talk
+- Andre Staltz : “Programming with Async Data Streams”
 
 --
 
