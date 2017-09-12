@@ -1027,21 +1027,26 @@ setTimeout(() => {
 
 ---
 
-# Schedulers & Testing (RxJS only)
+# Schedulers (RxJS only)
 
-- `Scheduler`s are part of Rx that allows finer-tuned control over the threading model for notifying `Observer`s:
+- `Scheduler`s are part of Rx that allows finer-tuned control over the threading model for notifying `Observer`s
     - As such, it's more designed for use in multi-threaded environments
     - Basically, not used much in Javascript and guidance is to be careful!
     - Bacon.js doesn't support this
-    - However, it can be useful in testing (upcoming...)
+    - However, it can be useful in testing (watch this space...)
 
-- Each operator in RxJS uses a default `Scheduler` internally, selected to provide best performance in most likely case.
+--
 
-- We can override this using `observeOn(newScheduler)`:
+- Each operator in RxJS uses a default `Scheduler` internally
+    - Selected to provide best performance in most likely case
+    - We can override this using `observeOn(newScheduler)`
     - After this, every call to `onNext` happens in the context defined by `newScheduler`
 
-- The `immediate` scheduler emits notifications synchronously, blocking the thread:
+---
 
+# Schedulers (RxJS only)
+
+- The `immediate` scheduler notifies synchronously, blocking the thread
 ```javascript
     console.log("Before subscription");
 
@@ -1062,14 +1067,15 @@ setTimeout(() => {
     > After subscription
 ```
 
+--
+
 - Well-suited for predictable and inexpensive (e.g. `O(1)`) operations
 
-- The `default` scheduler (a.k.a. `async`) schedules work asynchronously via a platform-specific mechanism:
-    - `process.nextTick` in Node.js
-    - `setTimeout` in the browser
+---
 
-- Notice the output difference:
+# Schedulers (RxJS only)
 
+- The `default` scheduler (a.k.a. `async`) schedules work asynchronously
 ```javascript
     console.log("Before subscription");
 
@@ -1090,6 +1096,8 @@ setTimeout(() => {
     > Emitted 3
 ```
 
+--
+
 - Never blocks the event loop, so useful for operations that take longer
 
 ---
@@ -1097,49 +1105,53 @@ setTimeout(() => {
 # Using Schedulers for Testing
 
 - Testing asynchronous behaviour is hard
-
-- Also, accurately testing time-based functions _in real time_ is slow
+    - Unpredictable race conditions
+    - Accurately testing time-based functions _in real time_ is slow
     - e.g. test that error is called after waiting 10s for a response
 
-- Another `Scheduler` implementation in RxJS is the `TestScheduler`:
+--
+
+- Another `Scheduler` implementation in RxJS is the `TestScheduler`
     - Allows us to emulate time and create deterministic tests
 
-- A specialization of a `VirtualTimeScheduler`:
-    - Execute actions in _virtual_ time instead of in real time
-    - Scheduled actions are placed in a queue and are assigned a moment in _virtual time_
+--
+
+- A specialization of a `VirtualTimeScheduler`
+    - Executes actions in _virtual_ time instead of in real time
+    - Scheduled actions are placed in a queue
+    - Actions are assigned a moment in _virtual time_
     - The scheduler then runs the actions in order when its clock advances
 
 ---
 
-- We can see how this works, and how it might extend to testing:
+# Using Schedulers for Testing
+
 ```javascript
-    const scheduler = new Rx.TestScheduler();
-    const testObject = Rx.Observable.interval(1000, scheduler);
+const scheduler = new Rx.TestScheduler();
+const testObject = Rx.Observable.interval(1000, scheduler);
+testObject.subscribe(console.log);
 
-    testObject.subscribe(console.log);
+advanceTime(1000);
+advanceTime(500);
+advanceTime(500);
+advanceTime(999);
+advanceTime(1);
 
-    advanceTime(1000);
-    advanceTime(500);
-    advanceTime(500);
-    advanceTime(999);
-    advanceTime(1);
-
-    function advanceTime(ms) {
-        console.log("Advancing time by", ms, "ms");
-        scheduler.advanceBy(ms);
-    }
+function advanceTime(ms) {
+    console.log("Advancing time by", ms, "ms");
+    scheduler.advanceBy(ms);  }
 ```
 
-    ```markdown
-    > Advancing time by 1000 ms
-    > 0
-    > Advancing time by 500 ms
-    > Advancing time by 500 ms
-    > 1
-    > Advancing time by 999 ms
-    > Advancing time by 1 ms
-    > 2
-    ``` 
+```markdown
+> Advancing time by 1000 ms
+> 0
+> Advancing time by 500 ms
+> Advancing time by 500 ms
+> 1
+> Advancing time by 999 ms
+> Advancing time by 1 ms
+> 2
+```
 
 
 ---
