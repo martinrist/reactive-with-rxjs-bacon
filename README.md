@@ -17,8 +17,7 @@ node $EXAMPLE_FILE
 # TODO Items
 
 - Comparison table
-- Restructure examples to remove numbering
+- Restructure examples to remove numbering?
 - Autocomplete example - review & tidy
-- Add note / text about RxJS 4 vs 5 and some API / method name changes
-- Add something about the upcoming ES7 Observable spec and how RxJS 5 has made some changes to start aligning
-    - See https://github.com/ReactiveX/rxjs/blob/master/MIGRATION.md
+- Work out how to update title
+- Review
