@@ -908,6 +908,14 @@ valuesAtInterval.subscribe(console.log);
 
 ---
 
+class: center, middle
+
+# Advanced Topics
+
+.center[(or just [skip to the end](#comparison-table))]
+
+---
+
 # Hot vs Cold Observables
 
 - In Bacon.js, observable only emits a value when a subscriber subscribes to it
@@ -1334,21 +1342,30 @@ function advanceTime(ms) {
 
 ---
 
+class: center, middle
 
+# Appendices
+
+---
+name: comparison-table
 # Comparison Table
 
-|                             | Bacon.js | RxJS   |
-| --------------------------- | -------- | ------ |
-| Multi-language              | No       | Yes    |
-| Modularity                  | No       | Yes    |
-| Hot observables             | Yes      | Yes    |
-| Cold observables            | No       | Yes    |
-| Properties                  | Yes      | No     |
-| Error terminates Observable | No       | Yes    |
-| Performance                 | Lower    | Higher |
-| Angular bindings            | ???      | Yes    |
-| Other framework bindings    | ???      | ???    |
-| Scheduler options           | No       | Yes    |
+|                                       | Bacon.js | RxJS      |
+| ------------------------------------- |:--------:|:---------:|
+| Properties                            | Yes      | No        |
+| Range of creation operators?          | Smaller  | Larger    |
+| Many language implementations?        | No       | Yes       |
+| Modular distribution?                 | No       | Yes       |
+| Atomic updates?                       | Always   | Opt-in    |
+| Error terminates Observable?          | No       | Yes       |
+| Hot observables                       | Yes      | Yes       |
+| Cold observables                      | No       | Yes       |
+| Subjects for decorating streams?      | No       | Yes       |
+| Schedulers?                           | No       | Yes       |
+| JQuery Support?                       | Yes      | Yes       |
+| Angular Support?                      | Possible | Yes       |
+| Performance                           | Lower    | Optimised |
+| Compatible with ES7 Observables spec? | No       | RxJS 5    |
 
 ---
 
@@ -1362,3 +1379,4 @@ function advanceTime(ms) {
 * [RxJS for Bacon.js Users](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md)
 * [RxJS Marbles](http://rxmarbles.com)
 * [Rx Visualizer](https://rxviz.com)
+* [This presentation (and examples)](https://github.com/martinrist/reactive-with-rxjs-bacon)
