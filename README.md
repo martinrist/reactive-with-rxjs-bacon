@@ -13,9 +13,3 @@ cd examples
 node install
 node $EXAMPLE_FILE
 ```
-
-# TODO Items
-
-- Autocomplete example - review & tidy
-- Work out how to update title
-- Review
