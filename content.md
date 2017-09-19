@@ -115,14 +115,14 @@ class: center, middle
 
 --
 
-- Traditionally, we'd add an event listener (<a href="examples/example1-mouseClick-trad.html" target="_blank">Example</a>):
+- Traditionally, we'd add an event listener (<a href="examples/example01a-mouseClick-trad.html" target="_blank">Example 1a</a>):
 ```javascript
     document.addEventListener("click", console.log);
 ```
 
 --
 
-- With Bacon.js (<a href="examples/example1-mouseClick-bacon.html" target="_blank">Example</a>) we use a `EventStream`:
+- With Bacon.js (<a href="examples/example01b-mouseClick-bacon.html" target="_blank">Example 1b</a>) we use a `EventStream`:
 ```javascript
     // Create a Bacon.js EventStream
     const eventStream = Bacon.fromEvent(document, "click");
@@ -148,7 +148,7 @@ class: center, middle
 
 --
 
-- Traditionally, we'd use an `if` statement in the callback (<a href="examples/example2-rhsMouseClick-trad.html" target="_blank">Example</a>)
+- Traditionally, we'd use an `if` statement in the callback (<a href="examples/example02a-rhsMouseClick-trad.html" target="_blank">Example 2a</a>)
 ```javascript
     document.addEventListener("click", e => {
         if (e.clientX > window.innerWidth / 2) {
@@ -169,7 +169,7 @@ class: center, middle
 
 # Filtering Event Streams
 
-- With Bacon.js we can apply a `filter` to the original stream (<a href="examples/example2-rhsMouseClick-bacon.html" target="_blank">Example</a>)
+- With Bacon.js we can apply a `filter` to the original stream (<a href="examples/example02b-rhsMouseClick-bacon.html" target="_blank">Example 2b</a>)
 
 --
 
@@ -207,7 +207,7 @@ class: center, middle
 
 --
 
-- Traditionally, it's in the callback again (<a href="examples/example3-mouseClickWithCoords-trad.html" target="_blank">Example</a>)
+- Traditionally, it's in the callback again (<a href="examples/example03a-mouseClickWithCoords-trad.html" target="_blank">Example 3a</a>)
 ```javascript
     const clickToCoords =
         e => "(" + e.clientX + ", " + e.clientY + ")";
@@ -220,7 +220,7 @@ class: center, middle
 
 # Transforming Events
 
-- With Bacon.js, this is a `map` (<a href="examples/example3-mouseClickWithCoords-trad.html" target="_blank">Example</a>)
+- With Bacon.js, this is a `map` (<a href="examples/example03b-mouseClickWithCoords-bacon.html" target="_blank">Example 3b</a>)
 ```javascript
     const clickToCoords =
         e => "(" + e.clientX + ", " + e.clientY + ")";
@@ -245,7 +245,7 @@ class: center, middle
 
 --
 
-- Starting to get a bit gnarly with the traditional approach (<a href="examples/example4-rhsMouseClickWithCoords-trad.html" target="_blank">Example</a>)
+- Starting to get a bit gnarly with the traditional approach (<a href="examples/example04a-rhsMouseClickWithCoords-trad.html" target="_blank">Example 4a</a>)
 ```javascript
     document.addEventListener("click", e => {
         if (e.clientX > window.innerWidth / 2) {
@@ -262,7 +262,7 @@ class: center, middle
 
 # Filtering _and_ Mapping
 
-- Here's the Bacon.js version (<a href="examples/example4-rhsMouseClickWithCoords-bacon.html" target="_blank">Example</a>)
+- Here's the Bacon.js version (<a href="examples/example04b-rhsMouseClickWithCoords-bacon.html" target="_blank">Example 4b</a>)
 ```javascript
     const eventStream = Bacon.fromEvent(document, "click");
 
@@ -293,7 +293,7 @@ class: center, middle
 
 --
 
-- Traditionally, we need to maintain some state (<a href="examples/example5-firstFiveMouseClicks-trad.html" target="_blank">Example</a>)
+- Traditionally, we need to maintain some state (<a href="examples/example05a-firstFiveMouseClicks-trad.html" target="_blank">Example 5a</a>)
 ```javascript
     let clicks = 0;
     document.addEventListener("click", function registerClicks(e) {
@@ -322,7 +322,7 @@ class: center, middle
 
 # Limiting Events
 
-- Bacon.js has the `take` operator, to take values then end the stream (<a href="examples/example5-firstFiveMouseClicks-bacon.html" target="_blank">Example</a>)
+- Bacon.js has `take` , to take values and end the stream (<a href="examples/example05b-firstFiveMouseClicks-bacon.html" target="_blank">Example 5b</a>)
 ```javascript
     const eventStream = Bacon.fromEvent(document, "click");
     eventStream.take(5).log();
@@ -384,7 +384,7 @@ class: center, middle
 
 --
 
-- We can do this using `scan`, the Bacon.js version of `reduce`
+- We can do this using `scan`, the Bacon.js version of `reduce` (<a href="examples/example06-mouseClickAndCount-bacon.html" target="_blank">Example 6</a>)
 ```javascript
     const clickStream = Bacon.fromEvent(document, "click");
     const clickCount = clickStream.scan(0, (acc, e) => acc + 1);
@@ -530,7 +530,7 @@ class: center, middle
 
 # Terminology Changes
 
-- Here's the 'log and count mouse clicks on the right' example in Bacon
+- Here's 'log and count mouse clicks on the right' in Bacon (<a href="examples/example07a-rhsMouseClickAndCount-bacon.html" target="_blank">Example 7a</a>)
 ```javascript
     const rhsStream = Bacon.fromEvent(document, "click")
             .filter(e => e.clientX > window.innerWidth / 2)
@@ -543,7 +543,7 @@ class: center, middle
 
 --
 
-- ... and in RxJS
+- ... and in RxJS (<a href="examples/example07b-rhsMouseClickAndCount-rxjs.html" target="_blank">Example 7b</a>)
 ```javascript
     const rhsStream = Rx.Observable.fromEvent(document, "click")
                .filter(e => e.clientX > window.innerWidth / 2)
@@ -575,7 +575,7 @@ class: center, middle
 
 --
 
-- This is where marble diagrams really come into their own!
+- This is where marble diagrams really come into their own
 
 --
 
@@ -627,7 +627,7 @@ class: center, middle
 
 --
 
-- In Bacon.js, we use `combineWith`
+- In Bacon.js, we use `combineWith` (<a href="examples/example08a-combineWith-bacon.js" target="_blank">Example 8a</a>)
 ```javascript
     // emits and increasing integer every second
     const unitsStream = Bacon.repeat(i => Bacon.later(1000, i));
@@ -648,7 +648,7 @@ class: center, middle
 
 # Combining Observables
 
-- The same version in RxJS, using `combineLatest`
+- The same version in RxJS, using `combineLatest` (<a href="examples/example08b-combineLatest-rxjs.js" target="_blank">Example 8b</a>)
 ```javascript
     const unitsStream = Rx.Observable.interval(1000);
     const tensStream = unitsStream.map(x => x * 10);
@@ -676,7 +676,7 @@ class: center, middle
 
 # Combining Observables
 
-- With RxJS, we can get around this, by using `zip`
+- With RxJS, we can get around this, by using `zip` (<a href="examples/example08c-zip-rxjs.js" target="_blank">Example 8c</a>)
 ```javascript
     const unitsStream = Rx.Observable.interval(1000);
     const tensStream = unitsStream.map(x => x * 10);
@@ -710,22 +710,24 @@ class: center, middle
 
 --
 
-```javascript
-const values = Rx.Observable.from(
-            ["red", "green", "blue", "purple", "pink"]);
-const ticks = Rx.Observable.interval(1000);
+- For example, in RxJS (<a href="examples/example09-iterateWithInterval-rxjs.js" target="_blank">Example 9</a>)
 
-const valuesAtInterval = values.zip(ticks, (c, i) => c);
+    ```javascript
+    const values = Rx.Observable.from(
+                ["red", "green", "blue", "purple", "pink"]);
+    const ticks = Rx.Observable.interval(1000);
 
-valuesAtInterval.subscribe(console.log);
+    const valuesAtInterval = values.zip(ticks, (c, i) => c);
 
-... all separated by 1 second
-> red
-> green
-> blue
-> purple
-> pink
-```
+    valuesAtInterval.subscribe(console.log);
+
+    ... all separated by 1 second
+    > red
+    > green
+    > blue
+    > purple
+    > pink
+    ```
 
 ---
 
@@ -736,7 +738,7 @@ valuesAtInterval.subscribe(console.log);
 
 --
 
--  In RxJS, we can provide multiple handlers when we `subscribe`
+-  In RxJS, we can provide multiple handlers when we `subscribe` (<a href="examples/example10a-errorHandling-rxjs.js" target="_blank">Example 10a</a>)
 ```javascript
     const observable = Rx.Observable
        .from([1, 2, 3])
@@ -762,7 +764,7 @@ valuesAtInterval.subscribe(console.log);
 
 # Error Handling
 
-- The same in Bacon.js
+- The same in Bacon.js (<a href="examples/example10b-errorHandling-bacon.js" target="_blank">Example 10b</a>)
 ```javascript
     const eventStream = Bacon.fromArray([1, 2, 3])
         .concat(Bacon.once(new Bacon.Error("An error occurred")))
@@ -787,7 +789,7 @@ valuesAtInterval.subscribe(console.log);
 
 # Error Handling
 
-- We can (almost) get the original RxJS-style behaviour back using `endOnError()`
+- We can (almost) get the original RxJS-style behaviour back using `endOnError()` (<a href="examples/example10c-errorHandling-endOnError-bacon.js" target="_blank">Example 10c</a>)
 ```javascript
     const eventStream = Bacon.fromArray([1, 2, 3])
         .concat(Bacon.once(new Bacon.Error("An error occurred")))
@@ -869,7 +871,7 @@ valuesAtInterval.subscribe(console.log);
 
 .center[![Marble Diagram - Debounce](images/debounceTimeMarbleDiagram.png)]
 
-- All of these are easier to see with an <a href="examples/example14-backpressure-lossy.html" target="_blank">example</a>
+- All of these are easier to see with an example (<a href="examples/example11a-backpressure-lossy-rxjs.html" target="_blank">Example 11a</a>)
 
 ---
 
@@ -880,7 +882,7 @@ valuesAtInterval.subscribe(console.log);
     - `bufferWithTime(time)` emits every `time` ms (possibly empty)
     - `bufferWithTimeOrCount(time, count)` combines them
 
-- Again, it's easier to see with an <a href="examples/example14-backpressure-lossless.html" target="_blank">example</a>
+- Again, it's easier to see with an example (<a href="examples/example11b-backpressure-lossless-rxjs.html" target="_blank">Example 11b)</a>
 
 ---
 
@@ -904,7 +906,7 @@ valuesAtInterval.subscribe(console.log);
 
 --
 
-- See <a href="examples/autocomplete.html" target="_blank">example</a>
+- See <a href="examples/example12-autocomplete-rxjs.html" target="_blank">example 12</a>
 
 ---
 
@@ -938,7 +940,7 @@ class: center, middle
 
 # Hot vs Cold Observables
 
-- Also, _all_ subscribers to the same observable _always_ get the same event
+- Also, _all_ subscribers to the same observable _always_ get the same event (<a href="examples/example13a-hotVsCold-bacon.js" target="_blank">Example 13a</a>)
 ```javascript
     // A clunkier version of Rx.Observable.interval(1000)
     const stream = Bacon.repeat(i => Bacon.later(1000, i));
@@ -965,7 +967,7 @@ class: center, middle
 
 # Hot vs Cold Observables
 
-- In RxJS it's a bit more complicated
+- In RxJS it's a bit more complicated (<a href="examples/example13b-hotVsCold-rxjs.js" target="_blank">Example 13b</a>)
 ```javascript
     const stream = Rx.Observable.interval(1000);
     console.log("Stream created");
@@ -1027,7 +1029,7 @@ class: center, middle
 
 --
 
-- Simple example - a plain old `Subject`:
+- Simple example - a plain old `Subject` (<a href="examples/example14a-subject-rxjs.js" target="_blank">Example 14a</a>)
 ```javascript
     const source = Rx.Observable.interval(1000);
     const subject = new Rx.Subject();
@@ -1051,7 +1053,7 @@ class: center, middle
 
 --
 
-- Recall what happens with two subscribers, because `interval` is a _cold observable_, that restarts for each subscriber
+- Recall what happens with two subscribers, because `interval` is a _cold observable_, that restarts for each subscriber (<a href="examples/example14b-source-withTwoSubscribers-rxjs.js" target="_blank">Example 14b</a>)
 ```javascript
     const source = Rx.Observable.interval(1000);
     source.subscribe(e => console.log("Subscriber 1: " + e));
@@ -1074,7 +1076,7 @@ class: center, middle
 
 # Subjects (RxJS only)
 
-- If we introduce a basic `Subject`, it turns `interval` into a _hot observable_
+- If we introduce a basic `Subject`, it turns `interval` into a _hot observable_ (<a href="examples/example14c-subject-withTwoSubscribers-rxjs.js" target="_blank">Example 14c</a>)
 ```javascript
     const source = Rx.Observable.interval(1000);
     const subject = new Rx.Subject();
@@ -1112,25 +1114,27 @@ class: center, middle
 
 # Subjects (RxJS only)
 
-```javascript
-// Emits "red", "green", "blue" at 1s intervals
-const source = Rx.Observable.from(["red", "green", "blue"])
-    .zip(Rx.Observable.interval(1000), (c, i) => c);
+- Example (<a href="examples/example14d-asyncSubject-rxjs.js" target="_blank">Example 14d</a>)
 
-const subject = new Rx.AsyncSubject();
-source.subscribe(subject);
+    ```javascript
+    // Emits "red", "green", "blue" at 1s intervals
+    const source = Rx.Observable.from(["red", "green", "blue"])
+        .zip(Rx.Observable.interval(1000), (c, i) => c);
 
-subject.subscribe(e => console.log("Subscriber 1: " + e));
-setTimeout(() => {
-    subject.subscribe(e => console.log("Subscriber 2: " + e))
-}, 5000);
+    const subject = new Rx.AsyncSubject();
+    source.subscribe(subject);
 
-> ... at T+3, first subscriber emits last value
-> Subscriber 1: blue
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 5000);
 
-> ... at T+5, second subscriber gets last value
-Subscriber 2: blue
-```
+    > ... at T+3, first subscriber emits last value
+    > Subscriber 1: blue
+
+    > ... at T+5, second subscriber gets last value
+    Subscriber 2: blue
+    ```
 
 - Useful for async network requests that we want to cache
 
@@ -1153,24 +1157,26 @@ Subscriber 2: blue
 
 # Subjects (RxJS only)
 
-```javascript
-const subject = new Rx.BehaviorSubject("purple");
-source.subscribe(subject);
+- Example (<a href="examples/example14e-behaviorSubject-rxjs.js" target="_blank">Example 14e</a>)
 
-subject.subscribe(e => console.log("Subscriber 1: " + e));
-setTimeout(() => {
-    subject.subscribe(e => console.log("Subscriber 2: " + e))
-}, 2500);
+    ```javascript
+    const subject = new Rx.BehaviorSubject("purple");
+    source.subscribe(subject);
 
-> ... initial value
-> Subscriber 1: purple
-> Subscriber 1: red
-> Subscriber 1: green
-> ... at T+2.5s, subscriber 2 joins the party
-> Subscriber 2: green
-> Subscriber 1: blue
-> Subscriber 2: blue
-```
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 2500);
+
+    > ... initial value
+    > Subscriber 1: purple
+    > Subscriber 1: red
+    > Subscriber 1: green
+    > ... at T+2.5s, subscriber 2 joins the party
+    > Subscriber 2: green
+    > Subscriber 1: blue
+    > Subscriber 2: blue
+    ```
 
 ---
 
@@ -1189,24 +1195,26 @@ setTimeout(() => {
 
 # Subjects (RxJS only)
 
-```javascript
-const subject = new Rx.ReplaySubject();
-source.subscribe(subject);
+- Example (<a href="examples/example14f-replaySubject-rxjs.js" target="_blank">Example 14f</a>)
 
-subject.subscribe(e => console.log("Subscriber 1: " + e));
-setTimeout(() => {
-    subject.subscribe(e => console.log("Subscriber 2: " + e))
-}, 2500);
+    ```javascript
+    const subject = new Rx.ReplaySubject();
+    source.subscribe(subject);
 
-> Subscriber 1: red
-> Subscriber 1: green
-> ... when subscriber 2 joins, it immediately gets
-> ... 'red' and 'green'
-> Subscriber 2: red
-> Subscriber 2: green
-> Subscriber 1: blue
-> Subscriber 2: blue
-```
+    subject.subscribe(e => console.log("Subscriber 1: " + e));
+    setTimeout(() => {
+        subject.subscribe(e => console.log("Subscriber 2: " + e))
+    }, 2500);
+
+    > Subscriber 1: red
+    > Subscriber 1: green
+    > ... when subscriber 2 joins, it immediately gets
+    > ... 'red' and 'green'
+    > Subscriber 2: red
+    > Subscriber 2: green
+    > Subscriber 1: blue
+    > Subscriber 2: blue
+    ```
 
 --
 
@@ -1233,7 +1241,7 @@ setTimeout(() => {
 
 # Schedulers (RxJS only)
 
-- The `immediate` scheduler notifies synchronously, blocking the thread
+- The `immediate` scheduler notifies synchronously, blocking the thread (<a href="examples/example15a-schedulers-immediate-rxjs.js" target="_blank">Example 15a</a>)
 ```javascript
     console.log("Before subscription");
 
@@ -1262,7 +1270,7 @@ setTimeout(() => {
 
 # Schedulers (RxJS only)
 
-- The `default` scheduler (a.k.a. `async`) schedules work asynchronously
+- The `default` scheduler (a.k.a. `async`) schedules work asynchronously (<a href="examples/example15b-schedulers-default-rxjs.js" target="_blank">Example 15b</a>)
 ```javascript
     console.log("Before subscription");
 
@@ -1313,32 +1321,32 @@ setTimeout(() => {
 
 # Schedulers (RxJS only)
 
-```javascript
-const scheduler = new Rx.TestScheduler();
-const testObject = Rx.Observable.interval(1000, scheduler);
-testObject.subscribe(console.log);
+- Example `TestScheduler` (<a href="examples/example15c-schedulers-testSchedulers-rxjs.js" target="_blank">Example 15c</a>)
 
-advanceTime(1000);
-advanceTime(500);
-advanceTime(500);
-advanceTime(999);
-advanceTime(1);
+    ```javascript
+    const scheduler = new Rx.TestScheduler();
+    const testObject = Rx.Observable.interval(1000, scheduler);
+    testObject.subscribe(console.log);
 
-function advanceTime(ms) {
-    console.log("Advancing time by", ms, "ms");
-    scheduler.advanceBy(ms);  }
-```
+    advanceTime(1000);
+    advanceTime(500);
+    advanceTime(500);
+    advanceTime(999);
+    advanceTime(1);
 
-```markdown
-> Advancing time by 1000 ms
-> 0
-> Advancing time by 500 ms
-> Advancing time by 500 ms
-> 1
-> Advancing time by 999 ms
-> Advancing time by 1 ms
-> 2
-```
+    function advanceTime(ms) {
+        console.log("Advancing time by", ms, "ms");
+        scheduler.advanceBy(ms);  }
+
+    > Advancing time by 1000 ms
+    > 0
+    > Advancing time by 500 ms
+    > Advancing time by 500 ms
+    > 1
+    > Advancing time by 999 ms
+    > Advancing time by 1 ms
+    > 2
+    ```
 
 ---
 

@@ -16,7 +16,6 @@ node $EXAMPLE_FILE
 
 # TODO Items
 
-- Restructure examples to remove numbering?
 - Autocomplete example - review & tidy
 - Work out how to update title
 - Review

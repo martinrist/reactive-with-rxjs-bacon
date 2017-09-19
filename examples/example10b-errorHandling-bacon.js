@@ -7,8 +7,4 @@ const eventStream = Bacon.fromArray([1, 2, 3])
     .concat(Bacon.fromArray([4, 5]));
 
 // The default behaviour outputs 4 and 5
-//eventStream.log();
-
-// Using `endOnError()` returns an `EventStream` that ends
-// when an error is thrown
- eventStream.endOnError().log();
+eventStream.log();
