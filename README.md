@@ -13,3 +13,7 @@ cd examples
 node install
 node $EXAMPLE_FILE
 ```
+
+# Enough already, just take me to the content
+
+(The content)[content.md]
