@@ -66,10 +66,6 @@ class: center, middle
     - e.g. DOM manipulation
     - This results in clean separation between event flow and side effects
 
---
-
-- Dependent things _react_ to changes in their dependencies
-    - Rather than the data sources _pushing_ data into their dependents
 
 ---
 
@@ -104,14 +100,15 @@ class: center, middle
 
 --
 
-- See how RxJS handles some of the more complex use cases
+- See how RxJS handles some of the more complex use cases (if there's time)
 
 
 ---
 
 # `EventStream`s in Bacon.js
 
-- Log the x- and y- coordinates of mouse-clicks to the console
+- Consider our first example
+    - Log the x- and y- coordinates of mouse-clicks to the console
 
 --
 
@@ -235,13 +232,12 @@ class: center, middle
     coordStream.log();
 ```
 
-- So, we've seen how to filter _or_ map events...
-
 ---
 
 # Filtering _and_ Mapping
 
-- Only show the RHS clicks _and_ show them as coordinates
+- So, we've seen how to filter _or_ map events...
+    - Now, only show the RHS clicks _and_ show them as coordinates
 
 --
 
@@ -356,20 +352,20 @@ class: center, middle
 
 --
 
-- Sound familiar?
+- This may start to sound familiar...
     - This is often why this is sometimes referred to as 'Functional Reactive Programming' (FRP)
     - Although, just 'Reactive Programming' is more typical
 
---
-
-- So, we've seen examples of `filter` and `map`, but what about `reduce`?
 
 ---
 
 # Accumulating State
 
-- Let's say we want to adapt the earlier examples to _count_ the number of clicks as well
-    - So, we need to maintain state
+- So, we've seen examples of `filter` and `map`, but what about `reduce`?
+
+--
+
+- Let's say we want to adapt our examples to _count_ the number of clicks as well
 
 --
 
@@ -468,7 +464,7 @@ class: center, middle
 --
 
 - RxJS has all of these, and more, e.g.
-    - `interval` - emits an incrementing integer
+    - `interval` - emits an incrementing integer at intervals
     - Better 'no-op' cases for testing and composition - e.g. `never`
     - `from` is more flexible and can create Observables from any iterable
     - Or from [generators](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md#generators)
@@ -479,11 +475,11 @@ class: center, middle
 
 # Switching to RxJS
 
-- RxJS is the JavaScript implementation of [Reactive Extensions](http://reactivex.io)
+- RxJS is the JavaScript implementation of <a href="http://reactivex.io" target="_blank">Reactive Extensions</a> 
 
 --
 
-- In contract to Bacon.js, Reactive Extensions is an API
+- In contrast to Bacon.js, Reactive Extensions is an API
 
 --
 
@@ -494,25 +490,26 @@ class: center, middle
     - RxScala
     - RxClojure
     - RxSwift
-    - ... [and others](http://reactivex.io/languages.html)
+    - ... <a href="http://reactivex.io/languages.html" target="_blank">and others</a>
 
 --
 
-- Unlike Bacon.js, RxJS is distributed as modules
+- RxJS is distributed as modules
+    - Unlike Bacon.js, where it's everything or nothing
     - `rx.all.js` for the whole lot
     - ... all the way down to `rx.lite.js` for a lightweight version
 
 --
 
 - RxJS also has other modules that add further bindings:
-    - [RxJS-DOM](https://github.com/Reactive-Extensions/RxJS-DOM) - DOM Bindings, JSONP, WebSockets, WebWorkers
-    - [rx.angular.js](https://github.com/Reactive-Extensions/rx.angular.js)
+    - <a href="https://github.com/Reactive-Extensions/RxJS-DOM" target="_blank">RxJS-DOM</a> - DOM Bindings, JSONP, WebSockets, WebWorkers
+    - <a href="https://github.com/Reactive-Extensions/rx.angular.js" target="_blank">rx.angular.js</a>
 
 ---
 
-# Terminology Changes
+# API Differences
 
-- Everything is an `Observable`
+- In RxJS, everything is an `Observable`
     - No distinction between `EventStream` and `Property`
     - This is one of the main differences between Bacon.js and RxJS
 
@@ -528,7 +525,7 @@ class: center, middle
 
 ---
 
-# Terminology Changes
+# API Differences
 
 - Here's 'log and count mouse clicks on the right' in Bacon (<a href="examples/example07a-rhsMouseClickAndCount-bacon.html" target="_blank">Example 7a</a>)
 ```javascript
@@ -560,11 +557,18 @@ class: center, middle
 
 # Visualising Observables
 
+--
+
 - 'Marble Diagrams' are often used to visualise Observables and operators
 
 .center[![Marble Diagram](images/marbleDiagram.png)]
 
-- Lots of examples at [RxJS Marbles](http://rxmarbles.com) and [Rx Visualizer](https://rxviz.com)
+--
+
+- Lots of examples and tools at
+    - <a href="http://rxmarbles.com" target="_blank">RxJS Marbles</a>
+    - <a href="http://rxviz.com" target="_blank">Rx Visualizer</a>
+    - <a href="https://rxfiddle.net" target="_blank">RxFiddle</a>
 
 ---
 
@@ -623,13 +627,13 @@ class: center, middle
 
 # Combining Observables
 
-- Add up a stream of units and a stream of 10's
+- Example: Add up a stream of units and a stream of 10's
 
 --
 
 - In Bacon.js, we use `combineWith` (<a href="examples/example08a-combineWith-bacon.js" target="_blank">Example 8a</a>)
 ```javascript
-    // emits and increasing integer every second
+    // emits an increasing integer every second
     const unitsStream = Bacon.repeat(i => Bacon.later(1000, i));
     const tensStream = unitsStream.map(x => x * 10);
 
@@ -692,25 +696,18 @@ class: center, middle
     > 44
 ```
 
---
-
-- Bacon.js has stronger, 'glitch-free' event delivery semantics:
-    - But the price is some performance overhead
-    - Generally, RxJS is considered more performant than Bacon.js
-    - [Kefir](https://github.com/rpominov/kefir) is inspired by an attempt to address this
-
 ---
 
 # Combining Observables
 
 - A final example showing composition of Observables
     - Iterate through an array emitting values at an interval
-    - Neither Bacon.js nor RxJS has a built in function to do this
-    - Instead we can combine streams
+    - Bacon.js has `Bacon.sequentially(interval, values)`
+    - In RxJS, we can combine streams to achieve the same
 
 --
 
-- For example, in RxJS (<a href="examples/example09-iterateWithInterval-rxjs.js" target="_blank">Example 9</a>)
+- For example (<a href="examples/example09-iterateWithInterval-rxjs.js" target="_blank">Example 9</a>)
 
     ```javascript
     const values = Rx.Observable.from(
@@ -764,7 +761,7 @@ class: center, middle
 
 # Error Handling
 
-- The same in Bacon.js (<a href="examples/example10b-errorHandling-bacon.js" target="_blank">Example 10b</a>)
+- In contrast, in Bacon.js (<a href="examples/example10b-errorHandling-bacon.js" target="_blank">Example 10b</a>)
 ```javascript
     const eventStream = Bacon.fromArray([1, 2, 3])
         .concat(Bacon.once(new Bacon.Error("An error occurred")))
@@ -783,7 +780,7 @@ class: center, middle
 
 --
 
-- Note that the error *doesn't* terminate the stream
+- Note that the error *doesn't* terminate the stream, and we go on to receive the later values _and_ the completion
 
 ---
 
@@ -809,15 +806,6 @@ class: center, middle
 - Notice that we *still* get the completion event in this case
 
 ---
-
-# Error Handling
-
-- Various options for what to do in the case of errors, including:
-    - `retry(attempts)` - re-executes the source `Observable`
-    - `catch(fallbackObservable)` - falls back to a replacement Observable
-
----
-
 
 # Backpressure
 
@@ -877,10 +865,14 @@ class: center, middle
 
 # Backpressure
 
+- Now for some lossless strategies
+
 - `buffer*` methods buffer data in memory then emit an array
     - `bufferWithCount(count)` emits when the buffer reaches `count` items
     - `bufferWithTime(time)` emits every `time` ms (possibly empty)
     - `bufferWithTimeOrCount(time, count)` combines them
+
+- Memory usage is dependent on buffer 'size'
 
 - Again, it's easier to see with an example (<a href="examples/example11b-backpressure-lossless-rxjs.html" target="_blank">Example 11b)</a>
 
@@ -888,7 +880,7 @@ class: center, middle
 
 # AutoComplete with RxJS
 
-- One of the canonical examples of reactive programming is 'AutoComplete':
+- One of the canonical examples of reactive programming is 'AutoComplete'
     - User enters search term
     - If longer than two characters, search Wikipedia and present results
     - 'Wait' for user to stop typing for a bit before querying
@@ -897,7 +889,7 @@ class: center, middle
 
 --
 
-- Pulls together a number of techniques we've seen here:
+- Pulls together a number of techniques we've seen so far
     - Creating `Observable`s from DOM events
     - Filtering (>2 characters)
     - Backpressure - waiting for `keyup` events to settle down before querying

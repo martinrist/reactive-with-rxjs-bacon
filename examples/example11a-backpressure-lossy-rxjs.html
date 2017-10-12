@@ -13,9 +13,9 @@
         <thead>
             <tr>
                 <td>Raw</td>
-                <td>Throttled</td>
-                <td>Sampled</td>
-                <td>Debounced</td>
+                <td>Throttled (5s)</td>
+                <td>Sampled (5s)</td>
+                <td>Debounced (5s)</td>
             </tr>
         </thead>
         <tbody>
@@ -42,7 +42,7 @@
     const sampledLogElement = document.getElementById("sampledLog");
     const debouncedLogElement = document.getElementById("debouncedLog");
 
-    const interval = 1000;
+    const interval = 5000;
 
     const rawClickStream = Rx.Observable.fromEvent(button, "click");
     const numberedClickStream = rawClickStream.scan(((total, e) => total + 1), 0);
