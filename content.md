@@ -103,11 +103,11 @@ class: center, middle
 
 --
 
-- Go through a more complex example
+- Go through a [more complex example](#example)
 
 --
 
-- See how RxJS handles some of the more complex use cases
+- See how RxJS handles some more [advanced use cases](#advanced-topics)
 
 
 ---
@@ -887,7 +887,7 @@ class: center, middle
 ---
 
 class: center, middle
-
+name: example
 # Example - AutoComplete
 
 .center[(or just [skip to the end](#comparison-table))]
@@ -920,7 +920,7 @@ class: center, middle
 ---
 
 class: center, middle
-
+name: advanced-topics
 # Advanced Topics
 
 .center[(or just [skip to the end](#comparison-table))]
