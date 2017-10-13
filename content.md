@@ -77,7 +77,7 @@ class: center, middle
 
 ---
 
-# What We'll Look at Today
+# What We'll Be Covering
 
 - Introduce Bacon.js and contrast it with traditional approaches for some simple examples
 
@@ -96,11 +96,18 @@ class: center, middle
 
 --
 
-- Go through some of the more advanced operators
+- Go through some of the more advanced operators on streams
+    - Merging streams
+    - Error handling
+    - Backpressure
 
 --
 
-- See how RxJS handles some of the more complex use cases (if there's time)
+- Go through a more complex example
+
+--
+
+- See how RxJS handles some of the more complex use cases
 
 
 ---
@@ -876,6 +883,16 @@ class: center, middle
 
 - Again, it's easier to see with an example (<a href="examples/example11b-backpressure-lossless-rxjs.html" target="_blank">Example 11b)</a>
 
+
+---
+
+class: center, middle
+
+# Example - AutoComplete
+
+.center[(or just [skip to the end](#comparison-table))]
+
+
 ---
 
 # AutoComplete with RxJS
@@ -1009,15 +1026,15 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - RxJS also has a `Subject` abstraction
     - A `Subject` can act as both an `Observer` and `Observable`
-    - Can subscribe to an `Observable` (an `Observer`)
-    - Can produce values (an `Observable`)
-    - Can have its own subscribers (an `Observable`)
+    - Can subscribe to an `Observable` (being an `Observer`)
+    - Can produce values (being an `Observable`)
+    - Can have its own subscribers (being an `Observable`)
     - Acts like a 'bridge' or 'proxy' between a data source and subscribers
-    - Can act as a 'decorator'
+    - Can act as a decorator to add new behaviour
 
 --
 
@@ -1038,7 +1055,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - By introducing the proxy, we can add more complex behaviour
     - Particularly in cases with multiple subscribers
@@ -1066,7 +1083,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - If we introduce a basic `Subject`, it turns `interval` into a _hot observable_ (<a href="examples/example14c-subject-withTwoSubscribers-rxjs.js" target="_blank">Example 14c</a>)
 ```javascript
@@ -1092,7 +1109,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - `AsyncSubject` emits the last value of a sequence when it terminates
     - It then caches the value forever
@@ -1104,7 +1121,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - Example (<a href="examples/example14d-asyncSubject-rxjs.js" target="_blank">Example 14d</a>)
 
@@ -1133,7 +1150,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - `BehaviorSubject`
     - When `Observer` subscribes, receives the latest emitted value
@@ -1147,7 +1164,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - Example (<a href="examples/example14e-behaviorSubject-rxjs.js" target="_blank">Example 14e</a>)
 
@@ -1172,7 +1189,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - `ReplaySubject`
      - When `Observer` subscribes, receives all values emitted so far
@@ -1185,7 +1202,7 @@ class: center, middle
 
 ---
 
-# Subjects (RxJS only)
+# Subjects (RxJS)
 
 - Example (<a href="examples/example14f-replaySubject-rxjs.js" target="_blank">Example 14f</a>)
 
@@ -1214,7 +1231,7 @@ class: center, middle
 
 ---
 
-# Schedulers (RxJS only)
+# Schedulers (RxJS)
 
 - `Scheduler`s are part of Rx that allows finer-tuned control over the threading model for notifying `Observer`s
     - As such, it's more designed for use in multi-threaded environments
@@ -1231,7 +1248,7 @@ class: center, middle
 
 ---
 
-# Schedulers (RxJS only)
+# Schedulers (RxJS)
 
 - The `immediate` scheduler notifies synchronously, blocking the thread (<a href="examples/example15a-schedulers-immediate-rxjs.js" target="_blank">Example 15a</a>)
 ```javascript
@@ -1260,7 +1277,7 @@ class: center, middle
 
 ---
 
-# Schedulers (RxJS only)
+# Schedulers (RxJS)
 
 - The `default` scheduler (a.k.a. `async`) schedules work asynchronously (<a href="examples/example15b-schedulers-default-rxjs.js" target="_blank">Example 15b</a>)
 ```javascript
@@ -1289,12 +1306,12 @@ class: center, middle
 
 ---
 
-# Schedulers (RxJS only)
+# Testing & Schedulers (RxJS)
 
 - Testing asynchronous behaviour is hard
     - Unpredictable race conditions
     - Accurately testing time-based functions _in real time_ is slow
-    - e.g. test that error is called after waiting 10s for a response
+    - e.g. test that an error is called after waiting 10s for a response
 
 --
 
@@ -1303,15 +1320,14 @@ class: center, middle
 
 --
 
-- A specialization of a `VirtualTimeScheduler`
-    - Executes actions in _virtual_ time instead of in real time
+- Executes actions in _virtual_ time instead of in real time
     - Scheduled actions are placed in a queue
     - Actions are assigned a moment in _virtual time_
     - The scheduler then runs the actions in order when its clock advances
 
 ---
 
-# Schedulers (RxJS only)
+# Schedulers (RxJS)
 
 - Example `TestScheduler` (<a href="examples/example15c-schedulers-testSchedulers-rxjs.js" target="_blank">Example 15c</a>)
 
@@ -1379,4 +1395,5 @@ name: comparison-table
 * [RxJS for Bacon.js Users](https://github.com/Reactive-Extensions/RxJS/blob/master/doc/mapping/bacon.js/whyrx.md)
 * [RxJS Marbles](http://rxmarbles.com)
 * [Rx Visualizer](https://rxviz.com)
+* [RxFiddle](https://rxfiddle.net)
 * [This presentation (and examples)](https://github.com/martinrist/reactive-with-rxjs-bacon)

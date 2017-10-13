@@ -23,11 +23,7 @@ function init() {
     keyup.subscribe(() => resultsDiv.innerHTML = "");
 
     // Dispatch a search to Wikipedia and create a stream
-    // of the response data, which looks something like:
-    // https://en.wikipedia.org/w/api.php?action=opensearch&search=Reactive
-
-
-
+    // of the response data
     const searchResultsStream = keyup.flatMapLatest(searchWikipedia)
         .pluck("response");
 
