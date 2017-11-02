@@ -40,6 +40,9 @@ function init() {
     );
 
     /* Example response data:
+        From:
+        https://en.wikipedia.org/w/api.php?action=opensearch&search=Reactive
+
         [
             "Reactive",
             [
